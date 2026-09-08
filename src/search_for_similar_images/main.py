@@ -169,7 +169,8 @@ class MainWindow(QMainWindow):
         # tool_bar_indexed_image_control
 
         # tool_bar_similar_image_control
-        self.tool_bar_similar_image_control = self.addToolBar("Similar image control")
+        self.tool_bar_similar_image_control = QToolBar("Similar image control", parent=self)
+        self.addToolBar(Qt.ToolBarArea.BottomToolBarArea, self.tool_bar_similar_image_control)
 
         self.action_select_similar_image = (
             self.tool_bar_similar_image_control.addAction("Select similar image")
