@@ -51,11 +51,21 @@ class ThumbnailDelegate(QStyledItemDelegate):
         self.image_cache = image_cache
         self.file_name_index = file_name_index
 
-    def _on_about_image(self, file_name: str, image: QImage, index: QModelIndex) -> None:
+    def _on_about_image(
+        self,
+        file_name: str,
+        image: QImage,
+        index: QModelIndex,
+    ) -> None:
         self.image_cache[file_name] = image
         self.view.update(index)
 
-    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
+    def paint(
+        self,
+        painter: QPainter,
+        option: QStyleOptionViewItem,
+        index: QModelIndex,
+    ) -> None:
         rect = option.rect
         self.initStyleOption(option, index)
 
@@ -72,10 +82,18 @@ class ThumbnailDelegate(QStyledItemDelegate):
         # Draw correct background
         option.text = ""
         style = option.widget.style() if option.widget else QApplication.style()
-        style.drawControl(QStyle.ControlElement.CE_ItemViewItem, option, painter, option.widget)
+        style.drawControl(
+            QStyle.ControlElement.CE_ItemViewItem, option, painter, option.widget
+        )
 
-        cg = QPalette.ColorGroup.Normal if option.state & QStyle.StateFlag.State_Enabled else QPalette.ColorGroup.Disabled
-        if cg == QPalette.ColorGroup.Normal and not (option.state & QStyle.StateFlag.State_Active):
+        cg = (
+            QPalette.ColorGroup.Normal
+            if option.state & QStyle.StateFlag.State_Enabled
+            else QPalette.ColorGroup.Disabled
+        )
+        if cg == QPalette.ColorGroup.Normal and not (
+            option.state & QStyle.StateFlag.State_Active
+        ):
             cg = QPalette.ColorGroup.Inactive
 
         # # Set pen color
@@ -109,9 +127,15 @@ class ThumbnailDelegate(QStyledItemDelegate):
         painter.save()
         painter.setPen(option.palette.color(cg, QPalette.ColorRole.Text))
         elided_text = font_metrics.elidedText(
-            base_file_name, Qt.TextElideMode.ElideRight, rect.width() - self.title_margin * 2
+            base_file_name,
+            Qt.TextElideMode.ElideRight,
+            rect.width() - self.title_margin * 2,
         )
-        painter.drawText(rect_title, Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft, elided_text)
+        painter.drawText(
+            rect_title,
+            Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft,
+            elided_text,
+        )
         painter.restore()
 
         if option.state & QStyle.StateFlag.State_Selected:

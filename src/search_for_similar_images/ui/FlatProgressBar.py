@@ -12,8 +12,7 @@ class FlatProgressBar(QProgressBar):
         super().__init__(*args)
 
         self.setTextVisible(False)
-        self.setStyleSheet(
-            """
+        self.setStyleSheet("""
             QProgressBar {
                 background-color: transparent;
                 border: 0px solid grey;
@@ -25,8 +24,7 @@ class FlatProgressBar(QProgressBar):
             QProgressBar::chunk {
                 background-color: gray;
             }
-            """
-        )
+            """)
 
     def setValue(self, value: int) -> None:
         super().setValue(value)

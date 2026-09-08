@@ -18,6 +18,8 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, pyqtSignal, QThread
 
+from PIL import Image
+
 import imagehash
 
 
@@ -25,7 +27,10 @@ class CrossSearchSimilarImagesThread(QThread):
     about_found_similars = pyqtSignal(str, list)
 
     def __init__(
-        self, image_by_hashes: dict = None, hash_algo: str = None, max_score: int = None
+        self,
+        image_by_hashes: dict = None,
+        hash_algo: str | None = None,
+        max_score: int | None = None,
     ) -> None:
         super().__init__()
 
@@ -40,8 +45,6 @@ class CrossSearchSimilarImagesThread(QThread):
 
             # TODO: Monkey patch. https://github.com/JohannesBuchner/imagehash/issues/112
             if self.hash_algo == "colorhash":
-                from PIL import Image
-
                 hash_value = imagehash.colorhash(Image.open(file_name))
 
             img_by_hash[file_name] = hash_value
@@ -88,7 +91,9 @@ class CrossSearchSimilarImagesDialog(QDialog):
         self.tree_widget.setAlternatingRowColors(True)
         self.tree_widget.setExpandsOnDoubleClick(False)
         self.tree_widget.itemDoubleClicked.connect(
-            lambda item, _: self.itemDoubleClicked.emit(item.data(0, Qt.ItemDataRole.UserRole))
+            lambda item, _: self.itemDoubleClicked.emit(
+                item.data(0, Qt.ItemDataRole.UserRole)
+            )
         )
 
         self.progress_bar = QProgressBar()

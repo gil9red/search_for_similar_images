@@ -31,10 +31,23 @@ from PyQt6.QtCore import Qt, QSettings, QSize
 
 from search_for_similar_images.third_party.shorten import shorten
 from search_for_similar_images.third_party.human_byte_size import sizeof_fmt
-from search_for_similar_images.third_party.layout_append_line__horizontal_vertical import VerticalLineWidget
+from search_for_similar_images.third_party.layout_append_line__horizontal_vertical import (
+    VerticalLineWidget,
+)
 
-from search_for_similar_images.config import DIR_IMAGES, IMAGE_HASH_ALGO, ICON_WIDTH, ICON_HEIGHT, SETTINGS_FILE_NAME
-from search_for_similar_images.db import db_get_all, db_add_image, db_exists, db_create_backup
+from search_for_similar_images.config import (
+    DIR_IMAGES,
+    IMAGE_HASH_ALGO,
+    ICON_WIDTH,
+    ICON_HEIGHT,
+    SETTINGS_FILE_NAME,
+)
+from search_for_similar_images.db import (
+    db_get_all,
+    db_add_image,
+    db_exists,
+    db_create_backup,
+)
 from search_for_similar_images.utils import explore
 
 from search_for_similar_images.ui.FileListModel import FileListModel
@@ -42,10 +55,14 @@ from search_for_similar_images.ui.ListImagesWidget import ListImagesWidget
 from search_for_similar_images.ui.FieldsProgressDialog import FieldsProgressDialog
 from search_for_similar_images.ui.FlatProgressBar import FlatProgressBar
 from search_for_similar_images.ui.IndexingSettingsWidget import IndexingSettingsWidget
-from search_for_similar_images.ui.SearchForSimilarSettingsWidget import SearchForSimilarSettingsWidget
+from search_for_similar_images.ui.SearchForSimilarSettingsWidget import (
+    SearchForSimilarSettingsWidget,
+)
 from search_for_similar_images.ui.AboutDialog import AboutDialog
 from search_for_similar_images.ui.ImageHashDetailsDialog import ImageHashDetailsDialog
-from search_for_similar_images.ui.CrossSearchSimilarImagesDialog import CrossSearchSimilarImagesDialog
+from search_for_similar_images.ui.CrossSearchSimilarImagesDialog import (
+    CrossSearchSimilarImagesDialog,
+)
 
 
 def log_uncaught_exceptions(ex_cls, ex, tb) -> None:
@@ -169,8 +186,12 @@ class MainWindow(QMainWindow):
         # tool_bar_indexed_image_control
 
         # tool_bar_similar_image_control
-        self.tool_bar_similar_image_control = QToolBar("Similar image control", parent=self)
-        self.addToolBar(Qt.ToolBarArea.BottomToolBarArea, self.tool_bar_similar_image_control)
+        self.tool_bar_similar_image_control = QToolBar(
+            "Similar image control", parent=self
+        )
+        self.addToolBar(
+            Qt.ToolBarArea.BottomToolBarArea, self.tool_bar_similar_image_control
+        )
 
         self.action_select_similar_image = (
             self.tool_bar_similar_image_control.addAction("Select similar image")
@@ -211,7 +232,9 @@ class MainWindow(QMainWindow):
             self.indexing_settings.windowTitle()
         )
         indexing_settings_widget_dock_widget.setWidget(self.indexing_settings)
-        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, indexing_settings_widget_dock_widget)
+        self.addDockWidget(
+            Qt.DockWidgetArea.RightDockWidgetArea, indexing_settings_widget_dock_widget
+        )
 
         self.search_for_similar_settings = SearchForSimilarSettingsWidget()
         search_for_similar_settings_dock_widget = QDockWidget(
@@ -221,7 +244,8 @@ class MainWindow(QMainWindow):
             self.search_for_similar_settings
         )
         self.addDockWidget(
-            Qt.DockWidgetArea.RightDockWidgetArea, search_for_similar_settings_dock_widget
+            Qt.DockWidgetArea.RightDockWidgetArea,
+            search_for_similar_settings_dock_widget,
         )
 
     def _fill_ui(self) -> None:

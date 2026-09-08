@@ -27,8 +27,7 @@ def create_connect() -> sqlite3.Connection:
 def init_db() -> None:
     # Создание базы и таблицы
     with create_connect() as connect:
-        connect.execute(
-            """\
+        connect.execute("""\
             CREATE TABLE IF NOT EXISTS ImageHash (
                 id INTEGER PRIMARY KEY,
                 file_name TEXT NOT NULL UNIQUE,
@@ -40,8 +39,7 @@ def init_db() -> None:
                 whash TEXT NOT NULL,
                 colorhash TEXT NOT NULL
             );
-            """
-        )
+            """)
 
 
 def db_add(

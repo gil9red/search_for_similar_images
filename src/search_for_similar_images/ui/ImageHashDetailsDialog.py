@@ -12,7 +12,12 @@ from search_for_similar_images.utils import explore
 
 
 class ImageHashDetailsDialog(QDialog):
-    def __init__(self, file_name: str, data: dict, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        file_name: str,
+        data: dict,
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
 
         self.setWindowTitle("ImageHash Details")
@@ -53,14 +58,12 @@ class ImageHashDetailsDialog(QDialog):
         value_widget = QLineEdit()
         value_widget.setReadOnly(True)
         value_widget.setText(value)
-        value_widget.setStyleSheet(
-            """
+        value_widget.setStyleSheet("""
             QLineEdit {
                 border: 0;
                 background: transparent;
             }
-            """
-        )
+            """)
 
         self._layout.addRow(label_widget, value_widget)
 

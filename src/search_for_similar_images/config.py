@@ -10,7 +10,6 @@ from PyQt6.QtCore import QStandardPaths
 
 from dotenv import load_dotenv, find_dotenv
 
-
 BASE_DIR: Path
 
 pyproject_path: str = find_dotenv("pyproject.toml")

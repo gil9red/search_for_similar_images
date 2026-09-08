@@ -7,7 +7,11 @@ __author__ = "ipetrash"
 from PyQt6.QtWidgets import QWidget, QFormLayout, QComboBox, QSpinBox, QCheckBox
 from PyQt6.QtCore import QSettings, pyqtSignal
 
-from search_for_similar_images.config import IMAGE_HASH_ALGO, DEFAULT_IMAGE_HASH_ALGO, DEFAULT_IMAGE_HASH_MAX_SCORE
+from search_for_similar_images.config import (
+    IMAGE_HASH_ALGO,
+    DEFAULT_IMAGE_HASH_ALGO,
+    DEFAULT_IMAGE_HASH_MAX_SCORE,
+)
 
 
 class SearchForSimilarSettingsWidget(QWidget):
