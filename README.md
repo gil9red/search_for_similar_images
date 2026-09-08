@@ -1,2 +1,2 @@
 ##
-![](screenshot.jpg)
+![screenshot.jpg](resources/screenshot.jpg)
