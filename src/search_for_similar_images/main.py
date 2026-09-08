@@ -29,28 +29,23 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QSettings, QSize
 
-from common import (
-    shorten,
-    sizeof_fmt,
-    IMAGE_HASH_ALGO,
-    SETTINGS_FILE_NAME,
-    ICON_WIDTH,
-    ICON_HEIGHT,
-    DIR_IMAGES,
-    explore,
-)
-from db import db_get_all, db_add_image, db_exists, db_create_backup
+from search_for_similar_images.third_party.shorten import shorten
+from search_for_similar_images.third_party.human_byte_size import sizeof_fmt
+from search_for_similar_images.third_party.explore__windows import explore
+from search_for_similar_images.third_party.layout_append_line__horizontal_vertical import VerticalLineWidget
 
-from third_party.layout_append_line__horizontal_vertical import VerticalLineWidget
-from ui.FileListModel import FileListModel
-from ui.ListImagesWidget import ListImagesWidget
-from ui.FieldsProgressDialog import FieldsProgressDialog
-from ui.FlatProgressBar import FlatProgressBar
-from ui.IndexingSettingsWidget import IndexingSettingsWidget
-from ui.SearchForSimilarSettingsWidget import SearchForSimilarSettingsWidget
-from ui.AboutDialog import AboutDialog
-from ui.ImageHashDetailsDialog import ImageHashDetailsDialog
-from ui.CrossSearchSimilarImagesDialog import CrossSearchSimilarImagesDialog
+from search_for_similar_images.config import DIR_IMAGES, IMAGE_HASH_ALGO, ICON_WIDTH, ICON_HEIGHT, SETTINGS_FILE_NAME
+from search_for_similar_images.db import db_get_all, db_add_image, db_exists, db_create_backup
+
+from search_for_similar_images.ui.FileListModel import FileListModel
+from search_for_similar_images.ui.ListImagesWidget import ListImagesWidget
+from search_for_similar_images.ui.FieldsProgressDialog import FieldsProgressDialog
+from search_for_similar_images.ui.FlatProgressBar import FlatProgressBar
+from search_for_similar_images.ui.IndexingSettingsWidget import IndexingSettingsWidget
+from search_for_similar_images.ui.SearchForSimilarSettingsWidget import SearchForSimilarSettingsWidget
+from search_for_similar_images.ui.AboutDialog import AboutDialog
+from search_for_similar_images.ui.ImageHashDetailsDialog import ImageHashDetailsDialog
+from search_for_similar_images.ui.CrossSearchSimilarImagesDialog import CrossSearchSimilarImagesDialog
 
 
 def log_uncaught_exceptions(ex_cls, ex, tb) -> None:
@@ -694,8 +689,8 @@ class MainWindow(QMainWindow):
         QApplication.closeAllWindows()
 
 
-if __name__ == "__main__":
-    app = QApplication([])
+def main() -> None:
+    app = QApplication(sys.argv)
 
     mw = MainWindow()
     mw.show()
@@ -705,4 +700,8 @@ if __name__ == "__main__":
 
     mw.fill_images_db()
 
-    app.exec()
+    sys.exit(app.exec())
+
+
+if __name__ == "__main__":
+    main()

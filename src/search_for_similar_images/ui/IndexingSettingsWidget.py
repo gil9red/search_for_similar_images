@@ -7,9 +7,9 @@ __author__ = "ipetrash"
 from PyQt5.QtWidgets import QWidget, QFormLayout, QLineEdit
 from PyQt5.QtCore import QSettings
 
-from ui.SelectDirBox import SelectDirBox
+from src.search_for_similar_images.ui.SelectDirBox import SelectDirBox
 
-from common import USER_PICTURES_DIR, DEFAULT_SUFFIXES
+from search_for_similar_images.config import DEFAULT_SUFFIXES, USER_PICTURES_DIR
 
 
 class IndexingSettingsWidget(QWidget):

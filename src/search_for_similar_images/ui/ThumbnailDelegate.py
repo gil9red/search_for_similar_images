@@ -13,10 +13,10 @@ from PyQt5.QtWidgets import (
     QStyle,
     QAbstractItemView,
 )
-from PyQt5.QtGui import QPainter, QPalette, QFontMetrics, QImage, QBrush, QPen
+from PyQt5.QtGui import QPainter, QPalette, QFontMetrics, QImage, QBrush
 from PyQt5.QtCore import Qt, QSize, QRect, QModelIndex, QThreadPool, pyqtSignal
 
-from third_party.ThumbnailWorker import ThumbnailWorker
+from src.search_for_similar_images.third_party.ThumbnailWorker import ThumbnailWorker
 
 # TODO:
 from .FileListModel import FileListModel

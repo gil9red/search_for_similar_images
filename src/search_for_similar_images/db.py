@@ -17,8 +17,7 @@ from PIL import Image
 # pip install imagehash
 import imagehash
 
-
-DB_FILE_NAME = str(Path(__file__).resolve().parent / "database.sqlite")
+from search_for_similar_images.config import DB_FILE_NAME
 
 
 def create_connect() -> sqlite3.Connection:
