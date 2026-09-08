@@ -4,7 +4,7 @@
 __author__ = "ipetrash"
 
 
-from PyQt5.QtWidgets import QDialog, QTextBrowser, QDialogButtonBox, QVBoxLayout
+from PyQt6.QtWidgets import QDialog, QTextBrowser, QDialogButtonBox, QVBoxLayout
 
 
 class AboutDialog(QDialog):
@@ -35,7 +35,7 @@ class AboutDialog(QDialog):
             """
         )
 
-        button_box = QDialogButtonBox(QDialogButtonBox.Ok)
+        button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
 

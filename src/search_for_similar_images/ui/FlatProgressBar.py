@@ -4,7 +4,7 @@
 __author__ = "ipetrash"
 
 
-from PyQt5.QtWidgets import QProgressBar
+from PyQt6.QtWidgets import QProgressBar
 
 
 class FlatProgressBar(QProgressBar):

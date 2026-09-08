@@ -7,16 +7,17 @@ __author__ = "ipetrash"
 from pathlib import Path
 
 from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QApplication,
     QStyledItemDelegate,
     QStyleOptionViewItem,
     QStyle,
     QAbstractItemView,
 )
-from PyQt5.QtGui import QPainter, QPalette, QFontMetrics, QImage, QBrush
-from PyQt5.QtCore import Qt, QSize, QRect, QModelIndex, QThreadPool, pyqtSignal
+from PyQt6.QtGui import QPainter, QPalette, QFontMetrics, QImage, QBrush
+from PyQt6.QtCore import Qt, QSize, QRect, QModelIndex, QThreadPool, pyqtSignal
 
-from src.search_for_similar_images.third_party.ThumbnailWorker import ThumbnailWorker
+from search_for_similar_images.third_party.ThumbnailWorker import ThumbnailWorker
 
 # TODO:
 from .FileListModel import FileListModel
@@ -54,9 +55,9 @@ class ThumbnailDelegate(QStyledItemDelegate):
         self.image_cache[file_name] = image
         self.view.update(index)
 
-    def paint(self, painter: QPainter, opt: QStyleOptionViewItem, index: QModelIndex) -> None:
-        rect = opt.rect
-        self.initStyleOption(opt, index)
+    def paint(self, painter: QPainter, option: QStyleOptionViewItem, index: QModelIndex) -> None:
+        rect = option.rect
+        self.initStyleOption(option, index)
 
         model = index.model()
         col_index = model.index(index.row(), self.file_name_index)
@@ -69,13 +70,13 @@ class ThumbnailDelegate(QStyledItemDelegate):
         is_matched = model.data(col_index, FileListModel.IsMatchedRole)
 
         # Draw correct background
-        opt.text = ""
-        style = opt.widget.style() if opt.widget else QApplication.style()
-        style.drawControl(QStyle.CE_ItemViewItem, opt, painter, opt.widget)
+        option.text = ""
+        style = option.widget.style() if option.widget else QApplication.style()
+        style.drawControl(QStyle.ControlElement.CE_ItemViewItem, option, painter, option.widget)
 
-        cg = QPalette.Normal if opt.state & QStyle.State_Enabled else QPalette.Disabled
-        if cg == QPalette.Normal and not (opt.state & QStyle.State_Active):
-            cg = QPalette.Inactive
+        cg = QPalette.ColorGroup.Normal if option.state & QStyle.StateFlag.State_Enabled else QPalette.ColorGroup.Disabled
+        if cg == QPalette.ColorGroup.Normal and not (option.state & QStyle.StateFlag.State_Active):
+            cg = QPalette.ColorGroup.Inactive
 
         # # Set pen color
         # if opt.state & QStyle.State_Selected:
@@ -106,17 +107,17 @@ class ThumbnailDelegate(QStyledItemDelegate):
         rect_title.setRight(rect_title.right() - self.title_margin)
 
         painter.save()
-        painter.setPen(opt.palette.color(cg, QPalette.Text))
+        painter.setPen(option.palette.color(cg, QPalette.ColorRole.Text))
         elided_text = font_metrics.elidedText(
-            base_file_name, Qt.ElideRight, rect.width() - self.title_margin * 2
+            base_file_name, Qt.TextElideMode.ElideRight, rect.width() - self.title_margin * 2
         )
-        painter.drawText(rect_title, Qt.AlignVCenter | Qt.AlignLeft, elided_text)
+        painter.drawText(rect_title, Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignLeft, elided_text)
         painter.restore()
 
-        if opt.state & QStyle.State_Selected:
-            painter.fillRect(rect, get_half_alpha(opt.palette.highlight()))
-        elif opt.state & QStyle.State_MouseOver:
-            painter.fillRect(rect, get_half_alpha(opt.palette.midlight()))
+        if option.state & QStyle.StateFlag.State_Selected:
+            painter.fillRect(rect, get_half_alpha(option.palette.highlight()))
+        elif option.state & QStyle.StateFlag.State_MouseOver:
+            painter.fillRect(rect, get_half_alpha(option.palette.midlight()))
 
         painter.save()
 
@@ -126,11 +127,11 @@ class ThumbnailDelegate(QStyledItemDelegate):
 
             if is_main:
                 pen.setWidth(pen.width() * 5)
-                pen.setColor(Qt.darkGreen)
+                pen.setColor(Qt.GlobalColor.darkGreen)
                 painter.setPen(pen)
             else:
                 pen.setWidth(pen.width() * 3)
-                pen.setColor(Qt.green)
+                pen.setColor(Qt.GlobalColor.green)
                 painter.setPen(pen)
 
         painter.drawRect(rect)

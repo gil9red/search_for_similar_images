@@ -6,7 +6,7 @@ __author__ = "ipetrash"
 
 from pathlib import Path
 
-from PyQt5.QtCore import QStandardPaths
+from PyQt6.QtCore import QStandardPaths
 
 from dotenv import load_dotenv, find_dotenv
 
@@ -40,7 +40,9 @@ DEFAULT_IMAGE_HASH_MAX_SCORE: int = 10
 
 DEFAULT_SUFFIXES: str = "jpg,jpeg,png,bmp"
 
-USER_PICTURES_DIR: str = QStandardPaths.standardLocations(QStandardPaths.PicturesLocation)[0]
+USER_PICTURES_DIR: str = QStandardPaths.standardLocations(
+    QStandardPaths.StandardLocation.PicturesLocation
+)[0]
 
 ICON_WIDTH: int = 128
 ICON_HEIGHT: int = 128

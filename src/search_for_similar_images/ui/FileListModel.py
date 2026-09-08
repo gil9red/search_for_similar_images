@@ -6,14 +6,15 @@ __author__ = "ipetrash"
 
 # from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QAbstractListModel, QModelIndex, Qt, pyqtSignal, QVariant
+from PyQt6.QtCore import QAbstractListModel, QModelIndex, Qt, pyqtSignal, QVariant
 
 
 # SOURCE: https://github.com/gil9red/SimplePyScripts/blob/f49a0c3462176ccc34bf31dffbe6fd88d1baa0bd/qt__pyqt__pyside__pyqode/lazy__qtwidgets_itemviews_fetchmore_example__QAbstractListModel.py#L19
 class FileListModel(QAbstractListModel):
     numberPopulated = pyqtSignal(int)
 
-    IsMainRole = Qt.UserRole
-    IsMatchedRole = Qt.UserRole + 1
+    IsMainRole = Qt.ItemDataRole.UserRole
+    IsMatchedRole = Qt.ItemDataRole.UserRole + 1
 
     def __init__(self, batch_size=50, parent=None):
         super().__init__(parent)
@@ -30,7 +31,7 @@ class FileListModel(QAbstractListModel):
     def rowCount(self, parent: QModelIndex = None) -> int:
         return self.fileCount
 
-    def data(self, index: QModelIndex, role=Qt.DisplayRole) -> QVariant:
+    def data(self, index: QModelIndex, role=Qt.ItemDataRole.DisplayRole) -> QVariant:
         if not index.isValid():
             return QVariant()
 
@@ -39,7 +40,7 @@ class FileListModel(QAbstractListModel):
 
         file_name = self.fileList[index.row()]
 
-        if role == Qt.DisplayRole or role == Qt.ToolTipRole:
+        if role == Qt.ItemDataRole.DisplayRole or role == Qt.ItemDataRole.ToolTipRole:
             return file_name
 
         if role in [self.IsMainRole, self.IsMatchedRole]:
@@ -61,10 +62,10 @@ class FileListModel(QAbstractListModel):
 
         return QVariant()
 
-    def canFetchMore(self, parent: QModelIndex = None) -> bool:
+    def canFetchMore(self, parent: QModelIndex | None = None) -> bool:
         return self.fileCount < len(self.fileList)
 
-    def fetchMore(self, parent: QModelIndex = None):
+    def fetchMore(self, parent: QModelIndex | None = None):
         remainder = len(self.fileList) - self.fileCount
         itemsToFetch = min(self.batch_size, remainder)
         if itemsToFetch <= 0:

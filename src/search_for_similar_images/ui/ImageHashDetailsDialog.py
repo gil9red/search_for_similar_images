@@ -4,8 +4,8 @@
 __author__ = "ipetrash"
 
 
-from PyQt5.QtWidgets import QFormLayout, QDialog, QLabel, QLineEdit, QWidget
-from PyQt5.QtGui import QIcon
+from PyQt6.QtWidgets import QFormLayout, QDialog, QLabel, QLineEdit, QWidget
+from PyQt6.QtGui import QIcon
 
 from search_for_similar_images.third_party.explore__windows import explore
 from search_for_similar_images.config import DIR_IMAGES
@@ -23,12 +23,14 @@ class ImageHashDetailsDialog(QDialog):
         value_widget.setToolTip(file_name)
 
         action_run = value_widget.addAction(
-            QIcon(DIR_IMAGES + "/run_image.svg"), QLineEdit.TrailingPosition
+            QIcon(DIR_IMAGES + "/run_image.svg"),
+            QLineEdit.ActionPosition.TrailingPosition,
         )
         action_run.triggered.connect(lambda: explore(value_widget.text(), select=False))
 
         action_view = value_widget.addAction(
-            QIcon(DIR_IMAGES + "/view.svg"), QLineEdit.TrailingPosition
+            QIcon(DIR_IMAGES + "/view.svg"),
+            QLineEdit.ActionPosition.TrailingPosition,
         )
         action_view.triggered.connect(lambda: explore(value_widget.text()))
 

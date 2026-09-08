@@ -15,7 +15,7 @@ from timeit import default_timer
 import imagehash
 from PIL import Image
 
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
     QSplitter,
@@ -26,8 +26,8 @@ from PyQt5.QtWidgets import (
     QMessageBox,
     QLabel,
 )
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QSettings, QSize
+from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import Qt, QSettings, QSize
 
 from search_for_similar_images.third_party.shorten import shorten
 from search_for_similar_images.third_party.human_byte_size import sizeof_fmt
@@ -210,7 +210,7 @@ class MainWindow(QMainWindow):
             self.indexing_settings.windowTitle()
         )
         indexing_settings_widget_dock_widget.setWidget(self.indexing_settings)
-        self.addDockWidget(Qt.RightDockWidgetArea, indexing_settings_widget_dock_widget)
+        self.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, indexing_settings_widget_dock_widget)
 
         self.search_for_similar_settings = SearchForSimilarSettingsWidget()
         search_for_similar_settings_dock_widget = QDockWidget(
@@ -220,7 +220,7 @@ class MainWindow(QMainWindow):
             self.search_for_similar_settings
         )
         self.addDockWidget(
-            Qt.RightDockWidgetArea, search_for_similar_settings_dock_widget
+            Qt.DockWidgetArea.RightDockWidgetArea, search_for_similar_settings_dock_widget
         )
 
     def _fill_ui(self) -> None:
@@ -281,7 +281,7 @@ class MainWindow(QMainWindow):
             tool.setObjectName(
                 "".join(x.title() for x in tool.windowTitle().strip()) + "_ToolBar"
             )
-            tool.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+            tool.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
             tool.setIconSize(QSize(32, 32))
 
         self.progress_bar_list_images_widget = FlatProgressBar()
@@ -306,7 +306,7 @@ class MainWindow(QMainWindow):
             _bottom_widget.minimumSizeHint().height(),
         )
 
-        splitter = QSplitter(Qt.Vertical)
+        splitter = QSplitter(Qt.Orientation.Vertical)
         splitter.addWidget(_top_widget)
         splitter.addWidget(_bottom_widget)
         splitter.setSizes([part_splitter_height * 2, part_splitter_height // 2])
@@ -662,7 +662,7 @@ class MainWindow(QMainWindow):
         ImageHashDetailsDialog(file_name, data, parent=self).show()
 
     def read_settings(self) -> None:
-        ini = QSettings(SETTINGS_FILE_NAME, QSettings.IniFormat)
+        ini = QSettings(SETTINGS_FILE_NAME, QSettings.Format.IniFormat)
 
         state = ini.value("MainWindow_State")
         if state:
@@ -676,7 +676,7 @@ class MainWindow(QMainWindow):
         self.search_for_similar_settings.read_settings(ini)
 
     def write_settings(self) -> None:
-        ini = QSettings(SETTINGS_FILE_NAME, QSettings.IniFormat)
+        ini = QSettings(SETTINGS_FILE_NAME, QSettings.Format.IniFormat)
         ini.setValue("MainWindow_State", self.saveState())
         ini.setValue("MainWindow_Geometry", self.saveGeometry())
 

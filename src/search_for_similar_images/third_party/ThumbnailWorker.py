@@ -6,6 +6,8 @@ __author__ = "ipetrash"
 
 from PyQt5.QtGui import QImage
 from PyQt5.QtCore import QRunnable, pyqtSignal, QObject
+from PyQt6.QtGui import QImage
+from PyQt6.QtCore import QRunnable, pyqtSignal, QObject
 
 
 class Signals(QObject):

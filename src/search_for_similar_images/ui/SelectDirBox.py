@@ -9,7 +9,7 @@ __author__ = "ipetrash"
 
 import os
 
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QWidget,
     QLineEdit,
     QLabel,
@@ -18,7 +18,7 @@ from PyQt5.QtWidgets import (
     QFileDialog,
     QStyle,
 )
-from PyQt5.QtCore import pyqtSignal
+from PyQt6.QtCore import pyqtSignal
 
 
 class SelectDirBox(QWidget):
@@ -35,9 +35,10 @@ class SelectDirBox(QWidget):
         self._value.textChanged.connect(self.valueChanged.emit)
         self._value.textEdited.connect(self.valueEdited.emit)
 
-        icon_open_dir = self.style().standardIcon(QStyle.SP_DirOpenIcon)
+        icon_open_dir = self.style().standardIcon(QStyle.StandardPixmap.SP_DirOpenIcon)
         action_open_dir = self._value.addAction(
-            icon_open_dir, QLineEdit.TrailingPosition
+            icon_open_dir,
+            QLineEdit.ActionPosition.TrailingPosition,
         )
         action_open_dir.setToolTip("Open directory")
         action_open_dir.triggered.connect(self._on_open_dir)
@@ -84,7 +85,7 @@ class SelectDirBox(QWidget):
 
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
+    from PyQt6.QtWidgets import QApplication
 
     app = QApplication([])
 

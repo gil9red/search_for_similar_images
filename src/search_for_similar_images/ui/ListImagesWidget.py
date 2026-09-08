@@ -4,8 +4,8 @@
 __author__ = "ipetrash"
 
 
-from PyQt5.QtWidgets import QListView
-from PyQt5.QtCore import Qt
+from PyQt6.QtWidgets import QListView
+from PyQt6.QtCore import Qt
 
 from .ThumbnailDelegate import ThumbnailDelegate
 
@@ -14,12 +14,12 @@ class ListImagesWidget(QListView):
     def __init__(self, icon_width, icon_height, image_cache, file_name_index) -> None:
         super().__init__()
 
-        self.setMovement(QListView.Static)
+        self.setMovement(QListView.Movement.Static)
         self.setDragEnabled(False)
-        self.setDragDropMode(QListView.NoDragDrop)
+        self.setDragDropMode(QListView.DragDropMode.NoDragDrop)
         self.setDropIndicatorShown(False)
-        self.setViewMode(QListView.IconMode)
-        self.setResizeMode(QListView.Adjust)
+        self.setViewMode(QListView.ViewMode.IconMode)
+        self.setResizeMode(QListView.ResizeMode.Adjust)
         self.setSpacing(5)
         self.setUniformItemSizes(True)
         self.setItemDelegate(
@@ -31,6 +31,6 @@ class ListImagesWidget(QListView):
     def currentFileName(self) -> str | None:
         index = self.currentIndex()
         if not index.isValid():
-            return
+            return None
 
-        return index.data(Qt.DisplayRole)
+        return index.data(Qt.ItemDataRole.DisplayRole)

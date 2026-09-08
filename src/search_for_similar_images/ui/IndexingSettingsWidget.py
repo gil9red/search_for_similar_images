@@ -4,10 +4,10 @@
 __author__ = "ipetrash"
 
 
-from PyQt5.QtWidgets import QWidget, QFormLayout, QLineEdit
-from PyQt5.QtCore import QSettings
+from PyQt6.QtWidgets import QWidget, QFormLayout, QLineEdit
+from PyQt6.QtCore import QSettings
 
-from src.search_for_similar_images.ui.SelectDirBox import SelectDirBox
+from .SelectDirBox import SelectDirBox
 
 from search_for_similar_images.config import DEFAULT_SUFFIXES, USER_PICTURES_DIR
 

@@ -4,7 +4,7 @@
 __author__ = "ipetrash"
 
 
-from PyQt5.QtWidgets import QLabel, QFormLayout
+from PyQt6.QtWidgets import QLabel, QFormLayout
 
 
 class KeyValueLabel(QLabel):
@@ -51,7 +51,7 @@ class KeyValueLabel(QLabel):
 
 
 if __name__ == "__main__":
-    from PyQt5.QtWidgets import QApplication
+    from PyQt6.QtWidgets import QApplication
 
     app = QApplication([])
 

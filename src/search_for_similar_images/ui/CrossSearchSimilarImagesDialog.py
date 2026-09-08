@@ -7,7 +7,7 @@ __author__ = "ipetrash"
 import itertools
 from collections import defaultdict
 
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QDialog,
     QVBoxLayout,
     QTreeWidget,
@@ -15,7 +15,7 @@ from PyQt5.QtWidgets import (
     QProgressBar,
     QHeaderView,
 )
-from PyQt5.QtCore import Qt, pyqtSignal, QThread
+from PyQt6.QtCore import Qt, pyqtSignal, QThread
 
 import imagehash
 
@@ -81,13 +81,13 @@ class CrossSearchSimilarImagesDialog(QDialog):
 
         self.tree_widget = QTreeWidget()
         self.tree_widget.setHeaderLabels(["FILE NAME", "SCORE"])
-        self.tree_widget.header().setSectionResizeMode(1, QHeaderView.Fixed)
+        self.tree_widget.header().setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)
         self.tree_widget.header().resizeSection(0, 450)
         self.tree_widget.header().resizeSection(1, 75)
         self.tree_widget.setAlternatingRowColors(True)
         self.tree_widget.setExpandsOnDoubleClick(False)
         self.tree_widget.itemDoubleClicked.connect(
-            lambda item, _: self.itemDoubleClicked.emit(item.data(0, Qt.UserRole))
+            lambda item, _: self.itemDoubleClicked.emit(item.data(0, Qt.ItemDataRole.UserRole))
         )
 
         self.progress_bar = QProgressBar()
@@ -108,13 +108,13 @@ class CrossSearchSimilarImagesDialog(QDialog):
 
     def _on_about_found_similars(self, file_name: str, similars: list[str]) -> None:
         item = QTreeWidgetItem([f"{file_name} ({len(similars)})"])
-        item.setData(0, Qt.UserRole, file_name)
+        item.setData(0, Qt.ItemDataRole.UserRole, file_name)
 
         self.tree_widget.addTopLevelItem(item)
 
         for x, score in similars:
             child = QTreeWidgetItem([x, str(score)])
-            child.setData(0, Qt.UserRole, x)
+            child.setData(0, Qt.ItemDataRole.UserRole, x)
             item.addChild(child)
 
     def start(self, image_by_hashes: dict, hash_algo: str, max_score: int) -> None:
