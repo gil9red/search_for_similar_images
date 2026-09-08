@@ -4,8 +4,7 @@
 __author__ = "ipetrash"
 
 
-from PyQt5.QtWidgets import QProgressDialog
-from PyQt5.QtCore import Qt
+# TODO: Перенести в общий репозиторий PyQt6
 from PyQt6.QtWidgets import QProgressDialog
 from PyQt6.QtCore import Qt
 
@@ -15,15 +14,11 @@ from .KeyValueLabel import KeyValueLabel
 class FieldsProgressDialog(QProgressDialog):
     def __init__(
         self,
-        minimum,
-        maximum,
-        window_title,
-        label_text="Operation in progress...",
-        parent=None,
         minimum: int,
         maximum: int,
         window_title: str,
         label_text: str="Operation in progress...",
+        parent=None,  # TODO:
     ) -> None:
         super().__init__(parent)
 

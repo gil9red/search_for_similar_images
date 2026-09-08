@@ -4,8 +4,7 @@
 __author__ = "ipetrash"
 
 
-# from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QAbstractListModel, QModelIndex, Qt, pyqtSignal, QVariant
+# TODO: Перенести в общий репозиторий PyQt6
 from PyQt6.QtCore import QAbstractListModel, QModelIndex, Qt, pyqtSignal, QVariant
 
 

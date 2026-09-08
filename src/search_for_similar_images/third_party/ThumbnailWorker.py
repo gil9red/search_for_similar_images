@@ -4,8 +4,7 @@
 __author__ = "ipetrash"
 
 
-from PyQt5.QtGui import QImage
-from PyQt5.QtCore import QRunnable, pyqtSignal, QObject
+# TODO: Перенести в общий репозиторий PyQt6
 from PyQt6.QtGui import QImage
 from PyQt6.QtCore import QRunnable, pyqtSignal, QObject
 

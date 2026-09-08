@@ -6,7 +6,7 @@ __author__ = "ipetrash"
 
 from pathlib import Path
 
-from PyQt5.QtWidgets import (
+# TODO: Перенести в общий репозиторий PyQt6
 from PyQt6.QtWidgets import (
     QApplication,
     QStyledItemDelegate,
