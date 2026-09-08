@@ -1,0 +1,13 @@
+[project]
+name = "search-for-similar-images"
+version = "2026.9.8"
+requires-python = ">=3.12"
+dependencies = [
+    "imagehash==4.3.2",
+    "pyqt5==5.15.11",
+]
+
+[tool.uv]
+required-environments = [
+    "sys_platform == 'win32' and platform_machine == 'AMD64'"
+]
