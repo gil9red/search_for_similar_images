@@ -7,8 +7,8 @@ __author__ = "ipetrash"
 from PyQt6.QtWidgets import QFormLayout, QDialog, QLabel, QLineEdit, QWidget
 from PyQt6.QtGui import QIcon
 
-from search_for_similar_images.third_party.explore__windows import explore
 from search_for_similar_images.config import DIR_IMAGES
+from search_for_similar_images.utils import explore
 
 
 class ImageHashDetailsDialog(QDialog):

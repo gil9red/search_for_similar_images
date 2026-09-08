@@ -31,11 +31,11 @@ from PyQt6.QtCore import Qt, QSettings, QSize
 
 from search_for_similar_images.third_party.shorten import shorten
 from search_for_similar_images.third_party.human_byte_size import sizeof_fmt
-from search_for_similar_images.third_party.explore__windows import explore
 from search_for_similar_images.third_party.layout_append_line__horizontal_vertical import VerticalLineWidget
 
 from search_for_similar_images.config import DIR_IMAGES, IMAGE_HASH_ALGO, ICON_WIDTH, ICON_HEIGHT, SETTINGS_FILE_NAME
 from search_for_similar_images.db import db_get_all, db_add_image, db_exists, db_create_backup
+from search_for_similar_images.utils import explore
 
 from search_for_similar_images.ui.FileListModel import FileListModel
 from search_for_similar_images.ui.ListImagesWidget import ListImagesWidget
