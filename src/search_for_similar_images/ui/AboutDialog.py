@@ -4,11 +4,11 @@
 __author__ = "ipetrash"
 
 
-from PyQt6.QtWidgets import QDialog, QTextBrowser, QDialogButtonBox, QVBoxLayout
+from PyQt6.QtWidgets import QWidget, QDialog, QTextBrowser, QDialogButtonBox, QVBoxLayout
 
 
 class AboutDialog(QDialog):
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self.setWindowTitle("About")

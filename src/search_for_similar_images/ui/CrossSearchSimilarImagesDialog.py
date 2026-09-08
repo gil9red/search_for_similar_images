@@ -8,6 +8,7 @@ import itertools
 from collections import defaultdict
 
 from PyQt6.QtWidgets import (
+    QWidget,
     QDialog,
     QVBoxLayout,
     QTreeWidget,
@@ -73,7 +74,7 @@ class CrossSearchSimilarImagesDialog(QDialog):
 
     window_title = "Cross search similar images"
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self.setWindowTitle(self.window_title)

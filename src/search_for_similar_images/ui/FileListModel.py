@@ -5,9 +5,9 @@ __author__ = "ipetrash"
 
 
 # TODO: Перенести в общий репозиторий PyQt6
-from PyQt6.QtCore import QAbstractListModel, QModelIndex, Qt, pyqtSignal, QVariant
+from PyQt6.QtCore import QObject, QAbstractListModel, QModelIndex, Qt, pyqtSignal, QVariant
 
-
+# TODO: Перенести в third_party
 # SOURCE: https://github.com/gil9red/SimplePyScripts/blob/f49a0c3462176ccc34bf31dffbe6fd88d1baa0bd/qt__pyqt__pyside__pyqode/lazy__qtwidgets_itemviews_fetchmore_example__QAbstractListModel.py#L19
 class FileListModel(QAbstractListModel):
     numberPopulated = pyqtSignal(int)
@@ -15,7 +15,7 @@ class FileListModel(QAbstractListModel):
     IsMainRole = Qt.ItemDataRole.UserRole
     IsMatchedRole = Qt.ItemDataRole.UserRole + 1
 
-    def __init__(self, batch_size=50, parent=None):
+    def __init__(self, batch_size=50, parent: QObject | None = None):
         super().__init__(parent)
 
         self.batch_size = batch_size

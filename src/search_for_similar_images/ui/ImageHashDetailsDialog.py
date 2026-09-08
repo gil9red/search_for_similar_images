@@ -12,7 +12,7 @@ from search_for_similar_images.utils import explore
 
 
 class ImageHashDetailsDialog(QDialog):
-    def __init__(self, file_name: str, data: dict, parent=None) -> None:
+    def __init__(self, file_name: str, data: dict, parent: QWidget | None = None) -> None:
         super().__init__(parent)
 
         self.setWindowTitle("ImageHash Details")
