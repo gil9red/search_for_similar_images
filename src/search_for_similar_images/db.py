@@ -89,14 +89,14 @@ def db_add(
 def db_add_image(file_name: str) -> bool:
     image = Image.open(file_name)
     return db_add(
-        file_name,
-        str(imagehash.average_hash(image)),
-        str(imagehash.phash(image)),
-        str(imagehash.phash_simple(image)),
-        str(imagehash.dhash(image)),
-        str(imagehash.dhash_vertical(image)),
-        str(imagehash.whash(image)),
-        str(imagehash.colorhash(image)),
+        file_name=file_name,
+        average_hash=str(imagehash.average_hash(image)),
+        phash=str(imagehash.phash(image)),
+        phash_simple=str(imagehash.phash_simple(image)),
+        dhash=str(imagehash.dhash(image)),
+        dhash_vertical=str(imagehash.dhash_vertical(image)),
+        whash=str(imagehash.whash(image)),
+        colorhash=str(imagehash.colorhash(image)),
     )
 
 
@@ -115,7 +115,7 @@ def db_get_all() -> list[dict]:
         return connect.execute("SELECT * FROM ImageHash").fetchall()
 
 
-def db_create_backup(backup_dir="backup") -> None:
+def db_create_backup(backup_dir: str = "backup") -> None:
     file_name = str(datetime.today().date()) + ".sqlite"
     os.makedirs(backup_dir, exist_ok=True)
 
