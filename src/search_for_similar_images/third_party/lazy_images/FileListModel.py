@@ -4,7 +4,6 @@
 __author__ = "ipetrash"
 
 
-# TODO: Перенести в общий репозиторий PyQt6
 from PyQt6.QtCore import (
     QObject,
     QAbstractListModel,
@@ -15,30 +14,32 @@ from PyQt6.QtCore import (
 )
 
 
-# TODO: Перенести в third_party
-# SOURCE: https://github.com/gil9red/SimplePyScripts/blob/f49a0c3462176ccc34bf31dffbe6fd88d1baa0bd/qt__pyqt__pyside__pyqode/lazy__qtwidgets_itemviews_fetchmore_example__QAbstractListModel.py#L19
 class FileListModel(QAbstractListModel):
     numberPopulated = pyqtSignal(int)
 
-    IsMainRole = Qt.ItemDataRole.UserRole
-    IsMatchedRole = Qt.ItemDataRole.UserRole + 1
+    IsMainRole: int = Qt.ItemDataRole.UserRole
+    IsMatchedRole: int = Qt.ItemDataRole.UserRole + 1
 
-    def __init__(self, batch_size=50, parent: QObject | None = None):
+    def __init__(self, batch_size: int = 50, parent: QObject | None = None) -> None:
         super().__init__(parent)
 
-        self.batch_size = batch_size
+        self.batch_size: int = batch_size
 
-        self.fileList = []
-        self.fileCount = 0
+        self.fileList: list[str] = []
+        self.fileCount: int = 0
 
-        self.main_file = None
-        self.matched_files = []
-        self.mark_matching = True
+        self.main_file: str | None = None
+        self.matched_files: list[str] = []
+        self.mark_matching: bool = True
 
-    def rowCount(self, parent: QModelIndex = None) -> int:
+    def rowCount(self, parent: QModelIndex | None = None) -> int:
         return self.fileCount
 
-    def data(self, index: QModelIndex, role=Qt.ItemDataRole.DisplayRole) -> QVariant:
+    def data(
+        self,
+        index: QModelIndex,
+        role: int = Qt.ItemDataRole.DisplayRole,
+    ) -> QVariant:
         if not index.isValid():
             return QVariant()
 
@@ -72,7 +73,7 @@ class FileListModel(QAbstractListModel):
     def canFetchMore(self, parent: QModelIndex | None = None) -> bool:
         return self.fileCount < len(self.fileList)
 
-    def fetchMore(self, parent: QModelIndex | None = None):
+    def fetchMore(self, parent: QModelIndex | None = None) -> None:
         remainder = len(self.fileList) - self.fileCount
         itemsToFetch = min(self.batch_size, remainder)
         if itemsToFetch <= 0:
@@ -88,24 +89,24 @@ class FileListModel(QAbstractListModel):
 
         self.numberPopulated.emit(itemsToFetch)
 
-    def set_file_list(self, fileList: list):
+    def set_file_list(self, file_list: list[str]) -> None:
         self.beginResetModel()
 
-        self.fileList = fileList
+        self.fileList = file_list
         self.fileCount = 0
 
         self.endResetModel()
 
-    def set_matched_files(self, main_file: str, file_list: list):
+    def set_matched_files(self, main_file: str, file_list: list[str]) -> None:
         self.main_file = main_file
 
         self.matched_files.clear()
         self.matched_files.extend(file_list)
 
-    def set_mark_matching(self, mark_matching: bool):
+    def set_mark_matching(self, mark_matching: bool) -> None:
         self.mark_matching = mark_matching
 
-    def get_index_by_file_name(self, file_name: str, column=0) -> QModelIndex:
+    def get_index_by_file_name(self, file_name: str, column: int = 0) -> QModelIndex:
         try:
             row = self.fileList.index(file_name)
             return self.index(row, column)

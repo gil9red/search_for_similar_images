@@ -4,6 +4,7 @@
 __author__ = "ipetrash"
 
 
+from PyQt6.QtGui import QImage
 from PyQt6.QtWidgets import QListView
 from PyQt6.QtCore import Qt
 
@@ -11,7 +12,13 @@ from .ThumbnailDelegate import ThumbnailDelegate
 
 
 class ListImagesWidget(QListView):
-    def __init__(self, icon_width, icon_height, image_cache, file_name_index) -> None:
+    def __init__(
+        self,
+        icon_width: int,
+        icon_height: int,
+        image_cache: dict[str, QImage | None],
+        file_name_index: int,
+    ) -> None:
         super().__init__()
 
         self.setMovement(QListView.Movement.Static)

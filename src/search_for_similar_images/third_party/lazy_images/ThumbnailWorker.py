@@ -4,7 +4,6 @@
 __author__ = "ipetrash"
 
 
-# TODO: Перенести в общий репозиторий PyQt6
 from PyQt6.QtGui import QImage
 from PyQt6.QtCore import QRunnable, pyqtSignal, QObject
 
@@ -14,7 +13,7 @@ class Signals(QObject):
 
 
 class ThumbnailWorker(QRunnable):
-    def __init__(self, file_name: str, width, height) -> None:
+    def __init__(self, file_name: str, width: int, height: int) -> None:
         super().__init__()
 
         self.file_name = file_name

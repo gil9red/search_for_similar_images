@@ -31,7 +31,7 @@ from PyQt6.QtCore import Qt, QSettings, QSize
 
 from search_for_similar_images.third_party.shorten import shorten
 from search_for_similar_images.third_party.human_byte_size import sizeof_fmt
-from search_for_similar_images.third_party.layout_append_line__horizontal_vertical import (
+from search_for_similar_images.third_party.layout_append_line__horizontal_vertical__PyQt6 import (
     VerticalLineWidget,
 )
 
@@ -50,8 +50,8 @@ from search_for_similar_images.db import (
 )
 from search_for_similar_images.utils import explore
 
-from search_for_similar_images.ui.FileListModel import FileListModel
-from search_for_similar_images.ui.ListImagesWidget import ListImagesWidget
+from search_for_similar_images.third_party.lazy_images.FileListModel import FileListModel
+from search_for_similar_images.third_party.lazy_images.ListImagesWidget import ListImagesWidget
 from search_for_similar_images.ui.FieldsProgressDialog import FieldsProgressDialog
 from search_for_similar_images.ui.FlatProgressBar import FlatProgressBar
 from search_for_similar_images.ui.IndexingSettingsWidget import IndexingSettingsWidget

@@ -6,7 +6,6 @@ __author__ = "ipetrash"
 
 from pathlib import Path
 
-# TODO: Перенести в общий репозиторий PyQt6
 from PyQt6.QtWidgets import (
     QApplication,
     QStyledItemDelegate,
@@ -15,11 +14,17 @@ from PyQt6.QtWidgets import (
     QAbstractItemView,
 )
 from PyQt6.QtGui import QPainter, QPalette, QFontMetrics, QImage, QBrush
-from PyQt6.QtCore import Qt, QSize, QRect, QModelIndex, QThreadPool, pyqtSignal
+from PyQt6.QtCore import (
+    Qt,
+    QSize,
+    QRect,
+    QModelIndex,
+    QThreadPool,
+    QAbstractItemModel,
+    pyqtSignal,
+)
 
-from search_for_similar_images.third_party.ThumbnailWorker import ThumbnailWorker
-
-# TODO:
+from .ThumbnailWorker import ThumbnailWorker
 from .FileListModel import FileListModel
 
 
@@ -36,20 +41,20 @@ class ThumbnailDelegate(QStyledItemDelegate):
     def __init__(
         self,
         view: QAbstractItemView,
-        width,
-        height,
-        image_cache: dict,
-        file_name_index=0,
+        width: int,
+        height: int,
+        image_cache: dict[str, QImage | None],
+        file_name_index: int = 0,
     ) -> None:
         super().__init__()
 
-        self.width = width
-        self.height = height
-        self.title_height = 20
-        self.title_margin = 5
-        self.view = view
-        self.image_cache = image_cache
-        self.file_name_index = file_name_index
+        self.width: int = width
+        self.height: int = height
+        self.title_height: int = 20
+        self.title_margin: int = 5
+        self.view: QAbstractItemView = view
+        self.image_cache: dict[str, QImage | None] = image_cache
+        self.file_name_index: int = file_name_index
 
     def _on_about_image(
         self,
@@ -62,14 +67,26 @@ class ThumbnailDelegate(QStyledItemDelegate):
 
     def paint(
         self,
-        painter: QPainter,
+        painter: QPainter | None,
         option: QStyleOptionViewItem,
         index: QModelIndex,
     ) -> None:
+        if not painter:
+            return
+
+        model: QAbstractItemModel | None = index.model()
+        if not model:
+            return
+
+        style: QStyle | None = (
+            option.widget.style() if option.widget else QApplication.style()
+        )
+        if not style:
+            return
+
         rect = option.rect
         self.initStyleOption(option, index)
 
-        model = index.model()
         col_index = model.index(index.row(), self.file_name_index)
 
         file_name = model.data(col_index)
@@ -81,7 +98,6 @@ class ThumbnailDelegate(QStyledItemDelegate):
 
         # Draw correct background
         option.text = ""
-        style = option.widget.style() if option.widget else QApplication.style()
         style.drawControl(
             QStyle.ControlElement.CE_ItemViewItem, option, painter, option.widget
         )
