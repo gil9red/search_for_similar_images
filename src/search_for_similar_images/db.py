@@ -42,7 +42,7 @@ def init_db() -> None:
             """)
 
 
-def db_add(
+def add(
     file_name: str,
     average_hash: str,
     phash: str,
@@ -88,7 +88,7 @@ def db_add(
 
 def add_image(file_name: str) -> bool:
     image = Image.open(file_name)
-    return db_add(
+    return add(
         file_name=file_name,
         average_hash=str(imagehash.average_hash(image)),
         phash=str(imagehash.phash(image)),
