@@ -22,7 +22,7 @@ else:
 DIR: Path = Path(__file__).resolve().parent
 
 DB_FILE_NAME: str = str(BASE_DIR / "database.sqlite")
-
+PATH_BACKUP: Path = BASE_DIR / "backup"
 DIR_IMAGES: str = str(DIR / "images")
 
 IMAGE_HASH_ALGO: list[str] = [

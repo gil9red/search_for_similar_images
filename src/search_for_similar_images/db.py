@@ -17,7 +17,7 @@ from PIL import Image
 # pip install imagehash
 import imagehash
 
-from search_for_similar_images.config import DB_FILE_NAME
+from search_for_similar_images.config import DB_FILE_NAME, PATH_BACKUP
 
 
 def create_connect() -> sqlite3.Connection:
@@ -115,12 +115,11 @@ def get_all() -> list[dict]:
         return connect.execute("SELECT * FROM ImageHash").fetchall()
 
 
-def create_backup(backup_dir: str = "backup") -> None:
+def create_backup(backup_dir: Path = PATH_BACKUP) -> None:
     file_name = str(datetime.today().date()) + ".sqlite"
     os.makedirs(backup_dir, exist_ok=True)
 
-    file_name = os.path.join(backup_dir, file_name)
-    shutil.copy(DB_FILE_NAME, file_name)
+    shutil.copy(DB_FILE_NAME, backup_dir / file_name)
 
 
 init_db()
