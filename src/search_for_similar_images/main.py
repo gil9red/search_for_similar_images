@@ -13,6 +13,8 @@ from pathlib import Path
 from timeit import default_timer
 
 import imagehash
+from imagehash import ImageHash
+
 from PIL import Image
 
 from PyQt6.QtWidgets import (
@@ -26,7 +28,7 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QLabel,
 )
-from PyQt6.QtGui import QIcon
+from PyQt6.QtGui import QIcon, QImage
 from PyQt6.QtCore import Qt, QSettings, QSize
 
 from search_for_similar_images.third_party.shorten import shorten
@@ -50,8 +52,12 @@ from search_for_similar_images.db import (
 )
 from search_for_similar_images.utils import explore
 
-from search_for_similar_images.third_party.lazy_images.FileListModel import FileListModel
-from search_for_similar_images.third_party.lazy_images.ListImagesWidget import ListImagesWidget
+from search_for_similar_images.third_party.lazy_images.FileListModel import (
+    FileListModel,
+)
+from search_for_similar_images.third_party.lazy_images.ListImagesWidget import (
+    ListImagesWidget,
+)
 from search_for_similar_images.ui.FieldsProgressDialog import FieldsProgressDialog
 from search_for_similar_images.ui.FlatProgressBar import FlatProgressBar
 from search_for_similar_images.ui.IndexingSettingsWidget import IndexingSettingsWidget
@@ -76,9 +82,11 @@ def log_uncaught_exceptions(ex_cls, ex, tb) -> None:
 
 sys.excepthook = log_uncaught_exceptions
 
-IMAGE_CACHE = dict()
 
-def parse_hash(algo_name, hex_value):
+IMAGE_CACHE: dict[str, QImage | None] = dict()
+
+
+def parse_hash(algo_name: str, hex_value: str) -> ImageHash | None:
     if not hex_value:
         return None
 
@@ -96,7 +104,7 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle(str(Path(__file__).parent.name))
 
-        self.image_by_hashes: dict[str, dict] = dict()
+        self.image_by_hashes: dict[str, dict[str, ImageHash | None]] = dict()
 
         self._fill_ui()
 
@@ -145,6 +153,7 @@ class MainWindow(QMainWindow):
             self.cross_search_similar_images
         )
 
+        # TODO:
         # self.action_scroll_to_origin = self.tool_bar_general.addAction('Scroll to origin')
         # self.action_scroll_to_origin.triggered.connect(self.scroll_to_origin)
         # tool_bar_general
@@ -258,11 +267,12 @@ class MainWindow(QMainWindow):
 
         self._status_bar_line_sep = VerticalLineWidget()
 
+        status_bar = self.statusBar()
         # Удаление разделителя между элементами в QStatusBar
-        self.statusBar().setStyleSheet("QStatusBar::item { border: none; }")
-        self.statusBar().addWidget(self.status_bar_indexed_image)
-        self.statusBar().addWidget(self._status_bar_line_sep)
-        self.statusBar().addWidget(self.status_bar_similar_image)
+        status_bar.setStyleSheet("QStatusBar::item { border: none; }")
+        status_bar.addWidget(self.status_bar_indexed_image)
+        status_bar.addWidget(self._status_bar_line_sep)
+        status_bar.addWidget(self.status_bar_similar_image)
 
         # files
         self.model_files = FileListModel()
@@ -275,7 +285,10 @@ class MainWindow(QMainWindow):
         )
 
         self.list_indexed_images_widget = ListImagesWidget(
-            ICON_WIDTH, ICON_HEIGHT, IMAGE_CACHE, file_name_index=0
+            icon_width=ICON_WIDTH,
+            icon_height=ICON_HEIGHT,
+            image_cache=IMAGE_CACHE,
+            file_name_index=0,
         )
         self.list_indexed_images_widget.clicked.connect(self._update_states)
         self.list_indexed_images_widget.doubleClicked.connect(self.run_indexed_image)
@@ -287,7 +300,10 @@ class MainWindow(QMainWindow):
         self.model_similar_images.numberPopulated.connect(self._update_states)
 
         self.list_images_widget_similar = ListImagesWidget(
-            ICON_WIDTH, ICON_HEIGHT, IMAGE_CACHE, file_name_index=0
+            icon_width=ICON_WIDTH,
+            icon_height=ICON_HEIGHT,
+            image_cache=IMAGE_CACHE,
+            file_name_index=0,
         )
         self.list_images_widget_similar.clicked.connect(self._update_states)
         self.list_images_widget_similar.doubleClicked.connect(self.run_similar_image)
@@ -409,15 +425,17 @@ class MainWindow(QMainWindow):
 
         self._update_states()
 
-    def _get_files(self, path_dir: Path, suffixes: list) -> list:
+    def _get_files(self, path_dir: Path, suffixes: list[str]) -> list[str]:
         # Для составления списка файлов, что нужно обработать
-        progress = FieldsProgressDialog(0, 0, "File search...", parent=self)
+        progress = FieldsProgressDialog(
+            minimum=0, maximum=0, window_title="File search...", parent=self
+        )
         progress.show()
 
         time_start = default_timer()
         start_datetime = dt.datetime.now()
         processed_nums = 0
-        file_names = []
+        file_names: list[str] = []
 
         for file in path_dir.rglob("*"):
             QApplication.processEvents()
@@ -466,29 +484,34 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Warning", f"Invalid directory: {path_dir}")
             return
 
-        suffixes_text = self.indexing_settings.line_edit_suffixes.text()
-        suffixes = [x.strip() for x in suffixes_text.lower().split(",") if x.strip()]
+        suffixes_text: str = self.indexing_settings.line_edit_suffixes.text()
+        suffixes: list[str] = [
+            x.strip() for x in suffixes_text.lower().split(",") if x.strip()
+        ]
 
-        file_names = self._get_files(path_dir, suffixes)
-        number_file_names = len(file_names)
+        file_names: list[str] = self._get_files(path_dir, suffixes)
+        number_file_names: int = len(file_names)
 
         print()
 
         # Для отображения диалога парсинга и заполнения базы
         progress = FieldsProgressDialog(
-            0, number_file_names, "Indexing...", parent=self
+            minimum=0,
+            maximum=number_file_names,
+            window_title="Indexing...",
+            parent=self,
         )
         progress.show()
 
         time_start = default_timer()
         start_datetime = dt.datetime.now()
-        number = 0
+        number: int = 0
 
         for i, file_name in enumerate(file_names, 1):
             QApplication.processEvents()
 
-            file_size = sizeof_fmt(os.path.getsize(file_name))
-            last_file_name = shorten(
+            file_size: str = sizeof_fmt(os.path.getsize(file_name))
+            last_file_name: str = shorten(
                 Path(file_name).name,
             )
 
@@ -547,10 +570,10 @@ class MainWindow(QMainWindow):
         if not file_name:
             return
 
-        hash_algo = self.search_for_similar_settings.cb_algo.currentText()
-        max_score = self.search_for_similar_settings.sb_max_score.value()
+        hash_algo: str = self.search_for_similar_settings.cb_algo.currentText()
+        max_score: int = self.search_for_similar_settings.sb_max_score.value()
 
-        hash_value = self.image_by_hashes[file_name][hash_algo]
+        hash_value: ImageHash | None = self.image_by_hashes[file_name][hash_algo]
 
         # TODO: Monkey patch. https://github.com/JohannesBuchner/imagehash/issues/112
         if hash_algo == "colorhash":
@@ -561,17 +584,20 @@ class MainWindow(QMainWindow):
             f"file_name={file_name}, hash_value={hash_value}"
         )
 
-        number_image_by_hashes = len(self.image_by_hashes)
+        number_image_by_hashes: int = len(self.image_by_hashes)
 
         # Для составления списка файлов, что нужно обработать
         progress = FieldsProgressDialog(
-            0, number_image_by_hashes, "Search for similar...", parent=self
+            minimum=0,
+            maximum=number_image_by_hashes,
+            window_title="Search for similar...",
+            parent=self,
         )
         progress.show()
 
         time_start = default_timer()
         start_datetime = dt.datetime.now()
-        results = []
+        results: list[str] = []
 
         for i, (other_file_name, hashes) in enumerate(self.image_by_hashes.items(), 1):
             QApplication.processEvents()
@@ -631,8 +657,8 @@ class MainWindow(QMainWindow):
         self.model_similar_images.set_file_list(results)
 
     def cross_search_similar_images(self) -> None:
-        hash_algo = self.search_for_similar_settings.cb_algo.currentText()
-        max_score = self.search_for_similar_settings.sb_max_score.value()
+        hash_algo: str = self.search_for_similar_settings.cb_algo.currentText()
+        max_score: int = self.search_for_similar_settings.sb_max_score.value()
 
         d = CrossSearchSimilarImagesDialog(self)
         d.itemDoubleClicked.connect(lambda file_name: explore(file_name, select=False))
@@ -653,37 +679,61 @@ class MainWindow(QMainWindow):
     #     self.list_images_widget_similar.scrollTo(index)
 
     def select_indexed_image(self) -> None:
-        file_name = self.list_indexed_images_widget.currentFileName()
+        file_name: str | None = self.list_indexed_images_widget.currentFileName()
+        if not file_name:
+            return
+
         explore(file_name)
 
     def open_indexed_image_directory(self) -> None:
-        file_name = self.list_indexed_images_widget.currentFileName()
+        file_name: str | None = self.list_indexed_images_widget.currentFileName()
+        if not file_name:
+            return
+
         explore(Path(file_name).parent, select=False)
 
     def run_indexed_image(self) -> None:
-        file_name = self.list_indexed_images_widget.currentFileName()
+        file_name: str | None = self.list_indexed_images_widget.currentFileName()
+        if not file_name:
+            return
+
         explore(file_name, select=False)
 
     def view_details_indexed_image(self) -> None:
-        file_name = self.list_indexed_images_widget.currentFileName()
-        data = self.image_by_hashes[file_name]
+        file_name: str | None = self.list_indexed_images_widget.currentFileName()
+        if not file_name:
+            return
+
+        data: dict[str, ImageHash | None] = self.image_by_hashes[file_name]
         ImageHashDetailsDialog(file_name, data, parent=self).show()
 
     def select_similar_image(self) -> None:
-        file_name = self.list_images_widget_similar.currentFileName()
+        file_name: str | None = self.list_images_widget_similar.currentFileName()
+        if not file_name:
+            return
+
         explore(file_name)
 
     def open_similar_image_directory(self) -> None:
-        file_name = self.list_images_widget_similar.currentFileName()
+        file_name: str | None = self.list_images_widget_similar.currentFileName()
+        if not file_name:
+            return
+
         explore(Path(file_name).parent, select=False)
 
     def run_similar_image(self) -> None:
-        file_name = self.list_images_widget_similar.currentFileName()
+        file_name: str | None = self.list_images_widget_similar.currentFileName()
+        if not file_name:
+            return
+
         explore(file_name, select=False)
 
     def view_details_similar_image(self) -> None:
-        file_name = self.list_images_widget_similar.currentFileName()
-        data = self.image_by_hashes[file_name]
+        file_name: str | None = self.list_images_widget_similar.currentFileName()
+        if not file_name:
+            return
+
+        data: dict[str, ImageHash | None] = self.image_by_hashes[file_name]
         ImageHashDetailsDialog(file_name, data, parent=self).show()
 
     def read_settings(self) -> None:
