@@ -4,8 +4,12 @@
 __author__ = "ipetrash"
 
 
+from typing import Any
+
 from PyQt6.QtWidgets import QFormLayout, QDialog, QLabel, QLineEdit, QWidget
 from PyQt6.QtGui import QIcon
+
+from imagehash import ImageHash
 
 from search_for_similar_images.config import DIR_IMAGES
 from search_for_similar_images.utils import explore
@@ -15,7 +19,7 @@ class ImageHashDetailsDialog(QDialog):
     def __init__(
         self,
         file_name: str,
-        data: dict,
+        data: dict[str, ImageHash | None],
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
@@ -44,7 +48,7 @@ class ImageHashDetailsDialog(QDialog):
 
         self.setLayout(self._layout)
 
-    def _addRow(self, key: str, value) -> QWidget:
+    def _addRow(self, key: str, value: Any) -> QWidget:
         try:
             value = str(value)
         except Exception as e:
