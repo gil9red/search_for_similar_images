@@ -572,7 +572,7 @@ class MainWindow(QMainWindow):
 
         # TODO: Monkey patch. https://github.com/JohannesBuchner/imagehash/issues/112
         if hash_algo == "colorhash":
-            hash_value = imagehash.colorhash(Image.open(file_name))
+            hash_value: ImageHash = imagehash.colorhash(Image.open(file_name))
 
         print(
             f"start_search_for_similar: hash_algo={hash_algo}, max_score={max_score}, "
@@ -617,11 +617,11 @@ class MainWindow(QMainWindow):
             if other_file_name == file_name:
                 continue
 
-            other_hash_value = hashes[hash_algo]
+            other_hash_value: ImageHash | None = hashes[hash_algo]
 
             # TODO: Monkey patch. https://github.com/JohannesBuchner/imagehash/issues/112
             if hash_algo == "colorhash":
-                other_hash_value = imagehash.colorhash(Image.open(other_file_name))
+                other_hash_value: ImageHash = imagehash.colorhash(Image.open(other_file_name))
 
             score = hash_value - other_hash_value
             print(
