@@ -25,6 +25,9 @@ def explore(path: str | Path, select: bool = True) -> None:
     if isinstance(path, Path):
         path: str = str(path)
 
+    if not os.path.exists(path):
+        return
+
     if select:
         show_in_file_manager(path)
         return
