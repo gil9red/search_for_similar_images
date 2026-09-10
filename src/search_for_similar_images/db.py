@@ -86,7 +86,7 @@ def db_add(
         return bool(last_row_id)
 
 
-def db_add_image(file_name: str) -> bool:
+def add_image(file_name: str) -> bool:
     image = Image.open(file_name)
     return db_add(
         file_name=file_name,
@@ -100,7 +100,7 @@ def db_add_image(file_name: str) -> bool:
     )
 
 
-def db_exists(file_name: str) -> bool:
+def exists_file(file_name: str) -> bool:
     sql = "SELECT 1 FROM ImageHash WHERE file_name = ?"
     file_name = str(Path(file_name).resolve())
 
@@ -108,14 +108,14 @@ def db_exists(file_name: str) -> bool:
         return bool(connect.execute(sql, [file_name]).fetchone())
 
 
-def db_get_all() -> list[dict]:
+def get_all() -> list[dict]:
     with create_connect() as connect:
         connect.row_factory = sqlite3.Row
 
         return connect.execute("SELECT * FROM ImageHash").fetchall()
 
 
-def db_create_backup(backup_dir: str = "backup") -> None:
+def create_backup(backup_dir: str = "backup") -> None:
     file_name = str(datetime.today().date()) + ".sqlite"
     os.makedirs(backup_dir, exist_ok=True)
 
@@ -127,4 +127,4 @@ init_db()
 
 
 if __name__ == "__main__":
-    print(len(db_get_all()))
+    print(len(get_all()))

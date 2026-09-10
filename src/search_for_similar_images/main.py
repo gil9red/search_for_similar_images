@@ -44,12 +44,7 @@ from search_for_similar_images.config import (
     ICON_HEIGHT,
     SETTINGS_FILE_NAME,
 )
-from search_for_similar_images.db import (
-    db_get_all,
-    db_add_image,
-    db_exists,
-    db_create_backup,
-)
+from search_for_similar_images import db
 from search_for_similar_images.utils import explore
 
 from search_for_similar_images.third_party.lazy_images.FileListModel import (
@@ -414,7 +409,7 @@ class MainWindow(QMainWindow):
     def fill_images_db(self) -> None:
         self.image_by_hashes.clear()
 
-        for row in db_get_all():
+        for row in db.get_all():
             file_name = row["file_name"]
             self.image_by_hashes[file_name] = {
                 hash_name: parse_hash(hash_name, row[hash_name])
@@ -529,13 +524,13 @@ class MainWindow(QMainWindow):
             if progress.wasCanceled():
                 break
 
-            if db_exists(file_name):
+            if db.exists_file(file_name):
                 continue
 
             try:
                 time = default_timer()
 
-                db_add_image(file_name)
+                db.add_image(file_name)
                 number += 1
                 print(
                     file_name,
@@ -561,7 +556,7 @@ class MainWindow(QMainWindow):
         progress.setValue(number_file_names)
 
         if number:
-            db_create_backup()
+            db.create_backup()
 
         print(f"\nTotal: {default_timer() - time_start:.2f} secs. Added: {number}")
 
