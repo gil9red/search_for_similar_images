@@ -124,13 +124,13 @@ class MainWindow(QMainWindow):
         # tool_bar_general
         self.tool_bar_general = self.addToolBar("General")
 
-        self.action_fill_images_db = self.tool_bar_general.addAction("Fill with images")
-        self.action_fill_images_db.setIcon(QIcon(DIR_IMAGES + "/refresh.svg"))
-        self.action_fill_images_db.triggered.connect(self.fill_images_db)
-
         self.action_start_indexing = self.tool_bar_general.addAction("Start indexing")
         self.action_start_indexing.setIcon(QIcon(DIR_IMAGES + "/index.svg"))
         self.action_start_indexing.triggered.connect(self.start_indexing)
+
+        self.action_fill_images_db = self.tool_bar_general.addAction("Fill with images")
+        self.action_fill_images_db.setIcon(QIcon(DIR_IMAGES + "/refresh.svg"))
+        self.action_fill_images_db.triggered.connect(self.fill_images_db)
 
         self.action_search_for_similar = self.tool_bar_general.addAction(
             "Search for similar"
