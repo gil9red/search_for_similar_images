@@ -123,12 +123,20 @@ class MainWindow(QMainWindow):
         # tool_bar_general
         self.tool_bar_general = self.addToolBar("General")
 
+        # TODO: После индексации обновить списки
+        # TODO: Если распараллелить на количество ядер (или дефолтное количество рабочих)?
+        #       Сравнить скорость
         self.action_start_indexing = self.tool_bar_general.addAction(
             QIcon(DIR_IMAGES + "/index.svg"),
             "Start indexing",
             self.start_indexing,
         )
 
+        # TODO: Удаление файлов в корзину SP_TrashIcon
+        # TODO: API для работы с файлами: копирование, перемещение, удаление в корзину, удаление, показ инфы
+        # TODO: Доступно для картинок: основного списка, списка похожих, из кросс-поиска
+
+        # TODO: Актуализации индекса, чтобы удалить те, что отсутствуют
 
         self.action_delete_all_indexes = self.tool_bar_general.addAction(
             self.style().standardIcon(QStyle.StandardPixmap.SP_DialogCancelButton),
@@ -141,6 +149,9 @@ class MainWindow(QMainWindow):
             self.fill_images_db,
         )
 
+        # TODO: Какое-нибудь API для обработки списка с прогресс баром и распараллеливанием в потоках и в общем репозитории
+        # TODO: Если распараллелить на количество ядер (или дефолтное количество рабочих)?
+        #       Сравнить скорость
         self.action_search_for_similar = self.tool_bar_general.addAction(
             QIcon(DIR_IMAGES + "/search.svg"),
             "Search for similar",
@@ -293,6 +304,9 @@ class MainWindow(QMainWindow):
             file_name_index=0,
         )
         self.list_indexed_images_widget.clicked.connect(self._update_states)
+        # TODO: Какая-нибудь настройка для двойного клика
+        #       QComboBox
+        #       Запоминать в настройках
         self.list_indexed_images_widget.doubleClicked.connect(self.run_indexed_image)
         self.list_indexed_images_widget.setModel(self.model_files)
         # files
@@ -402,6 +416,7 @@ class MainWindow(QMainWindow):
         if has_index_list_images_widget_similar:
             self.status_bar_similar_image.setText(file_name_similar)
 
+        # TODO:
         # self.action_scroll_to_origin.setEnabled(has_index_list_images_widget_similar)
 
         self.status_bar_indexed_image.setVisible(has_index_list_images_widget)
