@@ -123,7 +123,6 @@ class MainWindow(QMainWindow):
         # tool_bar_general
         self.tool_bar_general = self.addToolBar("General")
 
-        # TODO: После индексации обновить списки
         # TODO: Если распараллелить на количество ядер (или дефолтное количество рабочих)?
         #       Сравнить скорость
         self.action_start_indexing = self.tool_bar_general.addAction(
