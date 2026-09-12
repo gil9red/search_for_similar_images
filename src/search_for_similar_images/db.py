@@ -112,7 +112,7 @@ def get_all() -> list[dict]:
     with create_connect() as connect:
         connect.row_factory = sqlite3.Row
 
-        return connect.execute("SELECT * FROM ImageHash").fetchall()
+        return connect.execute("SELECT * FROM ImageHash ORDER BY id ASC").fetchall()
 
 
 def delete_all() -> None:
