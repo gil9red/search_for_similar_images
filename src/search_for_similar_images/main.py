@@ -4,11 +4,11 @@
 __author__ = "ipetrash"
 
 
-import datetime as dt
 import os
 import sys
 import traceback
 
+from datetime import datetime
 from pathlib import Path
 from timeit import default_timer
 
@@ -204,7 +204,7 @@ class MainWindow(QMainWindow):
             self.tool_bar_similar_image_control.addAction(
                 QIcon(DIR_IMAGES + "/image.svg"),
                 "Select similar image",
-                self.select_similar_image
+                self.select_similar_image,
             )
         )
         self.action_open_similar_image_directory = (
@@ -217,13 +217,13 @@ class MainWindow(QMainWindow):
         self.action_run_similar_image = self.tool_bar_similar_image_control.addAction(
             QIcon(DIR_IMAGES + "/run_image.svg"),
             "Run similar image",
-            self.run_similar_image
+            self.run_similar_image,
         )
         self.action_view_details_similar_image = (
             self.tool_bar_similar_image_control.addAction(
                 QIcon(DIR_IMAGES + "/view.svg"),
                 "View details",
-                self.view_details_similar_image
+                self.view_details_similar_image,
             )
         )
         # tool_bar_similar_image_control
@@ -449,9 +449,9 @@ class MainWindow(QMainWindow):
         )
         progress.show()
 
-        time_start = default_timer()
-        start_datetime = dt.datetime.now()
-        processed_nums = 0
+        time_start: float | int = default_timer()
+        start_datetime: datetime = datetime.now()
+        processed_nums: int = 0
         file_names: list[str] = []
 
         for file in path_dir.rglob("*"):
@@ -486,7 +486,7 @@ class MainWindow(QMainWindow):
                     "Suffixes": ", ".join(suffixes),
                     "Files processed": processed_nums,
                     "Files found": len(file_names),
-                    "Elapsed time": str(dt.datetime.now() - start_datetime).rsplit(
+                    "Elapsed time": str(datetime.now() - start_datetime).rsplit(
                         ".", maxsplit=1
                     )[0],
                     "Last file": last_file_name,
@@ -500,19 +500,7 @@ class MainWindow(QMainWindow):
 
         return file_names
 
-    def start_indexing(self) -> None:
-        path_dir = self.indexing_settings.dir_box.getValue()
-        path_dir = Path(path_dir).resolve()
-        if not path_dir.is_dir():
-            QMessageBox.warning(self, "Warning", f"Invalid directory: {path_dir}")
-            return
-
-        suffixes_text: str = self.indexing_settings.line_edit_suffixes.text()
-        suffixes: list[str] = [
-            x.strip() for x in suffixes_text.lower().split(",") if x.strip()
-        ]
-
-        file_names: list[str] = self._get_files(path_dir, suffixes)
+    def _do_indexing(self, file_names: list[str]) -> None:
         number_file_names: int = len(file_names)
 
         print()
@@ -526,8 +514,8 @@ class MainWindow(QMainWindow):
         )
         progress.show()
 
-        time_start = default_timer()
-        start_datetime = dt.datetime.now()
+        time_start: float | int = default_timer()
+        start_datetime: datetime = datetime.now()
         number: int = 0
 
         for i, file_name in enumerate(file_names, 1):
@@ -544,7 +532,7 @@ class MainWindow(QMainWindow):
             progress.setFields(
                 {
                     "Progress": f"{i} / {number_file_names}",
-                    "Elapsed time": str(dt.datetime.now() - start_datetime).rsplit(
+                    "Elapsed time": str(datetime.now() - start_datetime).rsplit(
                         ".", maxsplit=1
                     )[0],
                     "File name": f"{last_file_name} ({file_size})",
@@ -558,7 +546,7 @@ class MainWindow(QMainWindow):
                 continue
 
             try:
-                time = default_timer()
+                time: float | int = default_timer()
 
                 db.add_image(file_name)
                 number += 1
@@ -571,7 +559,7 @@ class MainWindow(QMainWindow):
                 progress.setFields(
                     {
                         "Progress": f"{i} / {number_file_names}",
-                        "Elapsed time": str(dt.datetime.now() - start_datetime).rsplit(
+                        "Elapsed time": str(datetime.now() - start_datetime).rsplit(
                             ".", maxsplit=1
                         )[0],
                         "Last file": f"{last_file_name} ({file_size})",
@@ -590,8 +578,23 @@ class MainWindow(QMainWindow):
 
         print(f"\nTotal: {default_timer() - time_start:.2f} secs. Added: {number}")
 
+    def start_indexing(self) -> None:
+        path_dir: str = self.indexing_settings.dir_box.getValue()
+        path_dir: Path = Path(path_dir).resolve()
+        if not path_dir.is_dir():
+            QMessageBox.warning(self, "Warning", f"Invalid directory: {path_dir}")
+            return
+
+        suffixes_text: str = self.indexing_settings.line_edit_suffixes.text()
+        suffixes: list[str] = [
+            x.strip() for x in suffixes_text.lower().split(",") if x.strip()
+        ]
+        file_names: list[str] = self._get_files(path_dir, suffixes)
+
+        self._do_indexing(file_names)
+
     def start_search_for_similar(self) -> None:
-        file_name = self.list_indexed_images_widget.currentFileName()
+        file_name: str | None = self.list_indexed_images_widget.currentFileName()
         if not file_name:
             return
 
@@ -620,8 +623,8 @@ class MainWindow(QMainWindow):
         )
         progress.show()
 
-        time_start = default_timer()
-        start_datetime = dt.datetime.now()
+        time_start: float | int = default_timer()
+        start_datetime: datetime = datetime.now()
         results: list[str] = []
 
         for i, (other_file_name, hashes) in enumerate(self.image_by_hashes.items(), 1):
@@ -634,7 +637,7 @@ class MainWindow(QMainWindow):
                     "Hash algo": hash_algo,
                     "Max score": max_score,
                     "Progress": f"{i} / {number_image_by_hashes}",
-                    "Elapsed time": str(dt.datetime.now() - start_datetime).rsplit(
+                    "Elapsed time": str(datetime.now() - start_datetime).rsplit(
                         ".", maxsplit=1
                     )[0],
                 }
@@ -643,7 +646,7 @@ class MainWindow(QMainWindow):
             if progress.wasCanceled():
                 break
 
-            print(i, "/", number_image_by_hashes, other_file_name)
+            print(f"{i} / {number_image_by_hashes} {other_file_name!r}")
             if other_file_name == file_name:
                 continue
 
