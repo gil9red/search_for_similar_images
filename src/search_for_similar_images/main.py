@@ -28,6 +28,7 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QLabel,
     QStyle,
+    QHBoxLayout,
 )
 from PyQt6.QtGui import QIcon, QImage
 from PyQt6.QtCore import Qt, QSettings, QSize
@@ -267,9 +268,21 @@ class MainWindow(QMainWindow):
         status_bar.addWidget(self._status_bar_line_sep)
         status_bar.addWidget(self.status_bar_similar_image)
 
+        def _fill_progress(label: QLabel, current: int, total: int) -> None:
+            label.setText(
+                f"{current} / {total} ({(current / total) if current > 0 else 0:.1%})"
+            )
+
         # files
+        self.label_indexed_images_progress = QLabel()
+
         self.model_files = FileListModel()
         self.model_files.numberPopulated.connect(self._update_states)
+        self.model_files.numberPopulated.connect(
+            lambda _, current, total: _fill_progress(
+                self.label_indexed_images_progress, current, total
+            )
+        )
         self.model_files.numberPopulated.connect(self._update_similar_images)
         self.search_for_similar_settings.about_mark_matching.connect(
             lambda flag: (
@@ -290,8 +303,15 @@ class MainWindow(QMainWindow):
         # files
 
         # similar_images
+        self.label_similar_images_progress = QLabel()
+
         self.model_similar_images = FileListModel()
         self.model_similar_images.numberPopulated.connect(self._update_states)
+        self.model_similar_images.numberPopulated.connect(
+            lambda _, current, total: _fill_progress(
+                self.label_similar_images_progress, current, total
+            )
+        )
 
         self.list_images_widget_similar = ListImagesWidget(
             icon_width=ICON_WIDTH,
@@ -325,14 +345,22 @@ class MainWindow(QMainWindow):
         _top_widget = QWidget()
         _top_widget.setLayout(QVBoxLayout())
         _top_widget.layout().setSpacing(0)
-        _top_widget.layout().addWidget(QLabel("Indexed images:"))
+        _top_header_layout = QHBoxLayout()
+        _top_header_layout.addWidget(QLabel("Indexed images:"))
+        _top_header_layout.addStretch()
+        _top_header_layout.addWidget(self.label_indexed_images_progress)
+        _top_widget.layout().addLayout(_top_header_layout)
         _top_widget.layout().addWidget(self.progress_bar_list_images_widget)
         _top_widget.layout().addWidget(self.list_indexed_images_widget)
 
         _bottom_widget = QWidget()
         _bottom_widget.setLayout(QVBoxLayout())
         _bottom_widget.layout().setSpacing(0)
-        _bottom_widget.layout().addWidget(QLabel("Similar images:"))
+        _bottom_header_layout = QHBoxLayout()
+        _bottom_header_layout.addWidget(QLabel("Similar images:"))
+        _bottom_header_layout.addStretch()
+        _bottom_header_layout.addWidget(self.label_similar_images_progress)
+        _bottom_widget.layout().addLayout(_bottom_header_layout)
         _bottom_widget.layout().addWidget(self.progress_bar_list_images_widget_similar)
         _bottom_widget.layout().addWidget(self.list_images_widget_similar)
 
