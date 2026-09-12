@@ -115,6 +115,11 @@ def get_all() -> list[dict]:
         return connect.execute("SELECT * FROM ImageHash").fetchall()
 
 
+def delete_all() -> None:
+    with create_connect() as connect:
+        connect.execute("DELETE FROM ImageHash")
+
+
 def create_backup(backup_dir: Path = PATH_BACKUP) -> None:
     file_name = str(datetime.today().date()) + ".sqlite"
     os.makedirs(backup_dir, exist_ok=True)

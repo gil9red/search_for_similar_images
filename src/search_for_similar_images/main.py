@@ -27,6 +27,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QMessageBox,
     QLabel,
+    QStyle,
 )
 from PyQt6.QtGui import QIcon, QImage
 from PyQt6.QtCore import Qt, QSettings, QSize
@@ -131,6 +132,13 @@ class MainWindow(QMainWindow):
 
         self.action_fill_images_db = self.tool_bar_general.addAction("Fill with images")
         self.action_fill_images_db.setIcon(QIcon(DIR_IMAGES + "/refresh.svg"))
+
+        self.action_delete_all_indexes = self.tool_bar_general.addAction(
+            self.style().standardIcon(QStyle.StandardPixmap.SP_DialogCancelButton),
+            "Delete all indexes",
+        )
+        self.action_delete_all_indexes.triggered.connect(self.delete_all_indexes)
+
         self.action_fill_images_db.triggered.connect(self.fill_images_db)
 
         self.action_search_for_similar = self.tool_bar_general.addAction(
@@ -273,6 +281,7 @@ class MainWindow(QMainWindow):
         # files
         self.model_files = FileListModel()
         self.model_files.numberPopulated.connect(self._update_states)
+        self.model_files.numberPopulated.connect(self._update_similar_images)
         self.search_for_similar_settings.about_mark_matching.connect(
             lambda flag: (
                 self.model_files.set_mark_matching(flag),
@@ -387,15 +396,17 @@ class MainWindow(QMainWindow):
             has_index_list_images_widget and has_index_list_images_widget_similar
         )
 
-        total_model_files = len(self.model_files.fileList)
+        total_model_files = len(self.model_files.total_file_list)
         if total_model_files == 0:
             # Чтобы не показывался busy-индикатор (бегающая полоска)
             self.progress_bar_list_images_widget.setRange(0, 1)
         else:
             self.progress_bar_list_images_widget.setRange(0, total_model_files)
-            self.progress_bar_list_images_widget.setValue(self.model_files.fileCount)
+            self.progress_bar_list_images_widget.setValue(
+                self.model_files.current_file_count
+            )
 
-        total_model_similar_images = len(self.model_similar_images.fileList)
+        total_model_similar_images = len(self.model_similar_images.total_file_list)
         if total_model_similar_images == 0:
             # Чтобы не показывался busy-индикатор (бегающая полоска)
             self.progress_bar_list_images_widget_similar.setRange(0, 1)
@@ -404,8 +415,13 @@ class MainWindow(QMainWindow):
                 0, total_model_similar_images
             )
             self.progress_bar_list_images_widget_similar.setValue(
-                self.model_similar_images.fileCount
+                self.model_similar_images.current_file_count
             )
+
+    def _update_similar_images(self):
+        if not self.model_files.total_file_list:
+            # Почистить список похожих
+            self.model_similar_images.set_total_file_list([])
 
     def fill_images_db(self) -> None:
         self.image_by_hashes.clear()
@@ -420,6 +436,20 @@ class MainWindow(QMainWindow):
         self.model_files.set_total_file_list(list(self.image_by_hashes.keys()))
 
         self._update_states()
+
+    def delete_all_indexes(self) -> None:
+        reply = QMessageBox.question(
+            self,
+            "Delete Indexes",
+            "Are you sure you want to delete all indexes?\nThis action cannot be undone.",
+            QMessageBox.StandardButton.Yes,
+            QMessageBox.StandardButton.No,
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+
+        db.delete_all()
+        self.fill_images_db()
 
     def _get_files(self, path_dir: Path, suffixes: list[str]) -> list[str]:
         # Для составления списка файлов, что нужно обработать
