@@ -364,7 +364,7 @@ class MainWindow(QMainWindow):
         _bottom_widget.layout().addWidget(self.progress_bar_list_images_widget_similar)
         _bottom_widget.layout().addWidget(self.list_images_widget_similar)
 
-        part_splitter_height = max(
+        part_splitter_height: int = max(
             _top_widget.minimumSizeHint().height(),
             _bottom_widget.minimumSizeHint().height(),
         )
@@ -699,9 +699,6 @@ class MainWindow(QMainWindow):
             #           можно в sql посмотреть или в self.image_by_hashes[file_name]
             if score > max_score:
                 continue
-
-            # print(f'Score: {score:2}. Similar images: {file_name!r} and {other_file_name!r}. '
-            #       f'{hash_value} vs {other_hash_value}')
 
             results.append(other_file_name)
 
