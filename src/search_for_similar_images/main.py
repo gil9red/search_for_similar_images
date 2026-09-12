@@ -417,7 +417,7 @@ class MainWindow(QMainWindow):
                 for hash_name in IMAGE_HASH_ALGO
             }
 
-        self.model_files.set_file_list(list(self.image_by_hashes.keys()))
+        self.model_files.set_total_file_list(list(self.image_by_hashes.keys()))
 
         self._update_states()
 
@@ -660,7 +660,7 @@ class MainWindow(QMainWindow):
             )
             self.model_files.set_matched_files(file_name, results)
 
-        self.model_similar_images.set_file_list(results)
+        self.model_similar_images.set_total_file_list(results)
 
     def cross_search_similar_images(self) -> None:
         hash_algo: str = self.search_for_similar_settings.cb_algo.currentText()
