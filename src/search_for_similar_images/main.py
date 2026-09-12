@@ -109,26 +109,24 @@ class MainWindow(QMainWindow):
 
     def _fill_menus(self) -> None:
         self.menu_file = self.menuBar().addMenu("File")
-        action_exit = self.menu_file.addAction("Exit")
-        action_exit.triggered.connect(self.close)
+        self.menu_file.addAction("Exit", self.close)
 
         self.menu_toolbars = self.menuBar().addMenu("Toolbars")
         self.menu_docks = self.menuBar().addMenu("Docks")
 
         self.menu_help = self.menuBar().addMenu("Help")
-        action_about_qt = self.menu_help.addAction("About Qt")
-        action_about_qt.triggered.connect(QApplication.aboutQt)
-
-        action_about = self.menu_help.addAction("About")
-        action_about.triggered.connect(lambda: AboutDialog(self).exec())
+        self.menu_help.addAction("About Qt", QApplication.aboutQt)
+        self.menu_help.addAction("About", lambda: AboutDialog(self).exec())
 
     def _fill_toolbars(self) -> None:
         # tool_bar_general
         self.tool_bar_general = self.addToolBar("General")
 
-        self.action_start_indexing = self.tool_bar_general.addAction("Start indexing")
-        self.action_start_indexing.setIcon(QIcon(DIR_IMAGES + "/index.svg"))
-        self.action_start_indexing.triggered.connect(self.start_indexing)
+        self.action_start_indexing = self.tool_bar_general.addAction(
+            QIcon(DIR_IMAGES + "/index.svg"),
+            "Start indexing",
+            self.start_indexing,
+        )
 
         self.action_fill_images_db = self.tool_bar_general.addAction("Fill with images")
         self.action_fill_images_db.setIcon(QIcon(DIR_IMAGES + "/refresh.svg"))
@@ -136,25 +134,25 @@ class MainWindow(QMainWindow):
         self.action_delete_all_indexes = self.tool_bar_general.addAction(
             self.style().standardIcon(QStyle.StandardPixmap.SP_DialogCancelButton),
             "Delete all indexes",
+            self.delete_all_indexes,
         )
-        self.action_delete_all_indexes.triggered.connect(self.delete_all_indexes)
+        self.action_fill_images_db = self.tool_bar_general.addAction(
+            QIcon(DIR_IMAGES + "/refresh.svg"),
+            "Fill with images",
+            self.fill_images_db,
+        )
 
         self.action_fill_images_db.triggered.connect(self.fill_images_db)
 
         self.action_search_for_similar = self.tool_bar_general.addAction(
-            "Search for similar"
+            QIcon(DIR_IMAGES + "/search.svg"),
+            "Search for similar",
+            self.start_search_for_similar,
         )
-        self.action_search_for_similar.setIcon(QIcon(DIR_IMAGES + "/search.svg"))
-        self.action_search_for_similar.triggered.connect(self.start_search_for_similar)
-
         self.action_cross_search_similar_images = self.tool_bar_general.addAction(
-            "Cross search similar images"
-        )
-        self.action_cross_search_similar_images.setIcon(
-            QIcon(DIR_IMAGES + "/search-cross.svg")
-        )
-        self.action_cross_search_similar_images.triggered.connect(
-            self.cross_search_similar_images
+            QIcon(DIR_IMAGES + "/search-cross.svg"),
+            "Cross search similar images",
+            self.cross_search_similar_images,
         )
 
         # TODO:
@@ -166,35 +164,31 @@ class MainWindow(QMainWindow):
         self.tool_bar_indexed_image_control = self.addToolBar("Indexed image control")
 
         self.action_select_indexed_image = (
-            self.tool_bar_indexed_image_control.addAction("Select indexed image")
+            self.tool_bar_indexed_image_control.addAction(
+                QIcon(DIR_IMAGES + "/image.svg"),
+                "Select indexed image",
+                self.select_indexed_image,
+            )
         )
-        self.action_select_indexed_image.setIcon(QIcon(DIR_IMAGES + "/image.svg"))
-        self.action_select_indexed_image.triggered.connect(self.select_indexed_image)
 
         self.action_open_indexed_image_directory = (
             self.tool_bar_indexed_image_control.addAction(
-                "Open indexed image directory"
+                QIcon(DIR_IMAGES + "/folder.svg"),
+                "Open indexed image directory",
+                self.open_indexed_image_directory,
             )
         )
-        self.action_open_indexed_image_directory.setIcon(
-            QIcon(DIR_IMAGES + "/folder.svg")
-        )
-        self.action_open_indexed_image_directory.triggered.connect(
-            self.open_indexed_image_directory
-        )
-
         self.action_run_indexed_image = self.tool_bar_indexed_image_control.addAction(
-            "Run indexed image"
+            QIcon(DIR_IMAGES + "/run_image.svg"),
+            "Run indexed image",
+            self.run_indexed_image,
         )
-        self.action_run_indexed_image.setIcon(QIcon(DIR_IMAGES + "/run_image.svg"))
-        self.action_run_indexed_image.triggered.connect(self.run_indexed_image)
-
         self.action_view_details_indexed_image = (
-            self.tool_bar_indexed_image_control.addAction("View details")
-        )
-        self.action_view_details_indexed_image.setIcon(QIcon(DIR_IMAGES + "/view.svg"))
-        self.action_view_details_indexed_image.triggered.connect(
-            self.view_details_indexed_image
+            self.tool_bar_indexed_image_control.addAction(
+                QIcon(DIR_IMAGES + "/view.svg"),
+                "View details",
+                self.view_details_indexed_image,
+            )
         )
         # tool_bar_indexed_image_control
 
@@ -207,35 +201,30 @@ class MainWindow(QMainWindow):
         )
 
         self.action_select_similar_image = (
-            self.tool_bar_similar_image_control.addAction("Select similar image")
-        )
-        self.action_select_similar_image.setIcon(QIcon(DIR_IMAGES + "/image.svg"))
-        self.action_select_similar_image.triggered.connect(self.select_similar_image)
-
-        self.action_open_similar_image_directory = (
             self.tool_bar_similar_image_control.addAction(
-                "Open similar image directory"
+                QIcon(DIR_IMAGES + "/image.svg"),
+                "Select similar image",
+                self.select_similar_image
             )
         )
-        self.action_open_similar_image_directory.setIcon(
-            QIcon(DIR_IMAGES + "/folder.svg")
+        self.action_open_similar_image_directory = (
+            self.tool_bar_similar_image_control.addAction(
+                QIcon(DIR_IMAGES + "/folder.svg"),
+                "Open similar image directory",
+                self.open_similar_image_directory,
+            )
         )
-        self.action_open_similar_image_directory.triggered.connect(
-            self.open_similar_image_directory
-        )
-
         self.action_run_similar_image = self.tool_bar_similar_image_control.addAction(
-            "Run similar image"
+            QIcon(DIR_IMAGES + "/run_image.svg"),
+            "Run similar image",
+            self.run_similar_image
         )
-        self.action_run_similar_image.setIcon(QIcon(DIR_IMAGES + "/run_image.svg"))
-        self.action_run_similar_image.triggered.connect(self.run_similar_image)
-
         self.action_view_details_similar_image = (
-            self.tool_bar_similar_image_control.addAction("View details")
-        )
-        self.action_view_details_similar_image.setIcon(QIcon(DIR_IMAGES + "/view.svg"))
-        self.action_view_details_similar_image.triggered.connect(
-            self.view_details_similar_image
+            self.tool_bar_similar_image_control.addAction(
+                QIcon(DIR_IMAGES + "/view.svg"),
+                "View details",
+                self.view_details_similar_image
+            )
         )
         # tool_bar_similar_image_control
 
@@ -360,7 +349,9 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(splitter)
 
     def _update_states(self) -> None:
-        file_name_indexed = self.list_indexed_images_widget.currentFileName()
+        file_name_indexed: str | None = (
+            self.list_indexed_images_widget.currentFileName()
+        )
         has_index_list_images_widget = bool(file_name_indexed)
 
         self.action_search_for_similar.setEnabled(has_index_list_images_widget)
