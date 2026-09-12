@@ -14,8 +14,8 @@ class FlatProgressBar(QProgressBar):
         self.setTextVisible(False)
         self.setStyleSheet("""
             QProgressBar {
-                background-color: transparent;
-                border: 0px solid grey;
+                background-color: rgba(128, 128, 128, 0.3);
+                border: 0px solid gray;
                 border-radius: 5px;
                 max-height: 3px;
                 margin-top: 5px;
