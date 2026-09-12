@@ -78,6 +78,7 @@ def log_uncaught_exceptions(ex_cls, ex, tb) -> None:
 sys.excepthook = log_uncaught_exceptions
 
 
+DEFAULT_PATH_MAX_LENGTH: int = 50
 IMAGE_CACHE: dict[str, QImage | None] = dict()
 
 
@@ -451,10 +452,16 @@ class MainWindow(QMainWindow):
 
             last_file_name = shorten(
                 Path(file_names[-1]).name,
+                length=DEFAULT_PATH_MAX_LENGTH,
+                middle=True,
             )
             progress.setFields(
                 {
-                    "Directory path": shorten(str(path_dir), length=50),
+                    "Directory path": shorten(
+                        str(path_dir),
+                        length=DEFAULT_PATH_MAX_LENGTH,
+                        middle=True,
+                    ),
                     "Suffixes": ", ".join(suffixes),
                     "Files processed": processed_nums,
                     "Files found": len(file_names),
@@ -508,6 +515,8 @@ class MainWindow(QMainWindow):
             file_size: str = sizeof_fmt(os.path.getsize(file_name))
             last_file_name: str = shorten(
                 Path(file_name).name,
+                length=DEFAULT_PATH_MAX_LENGTH,
+                middle=True,
             )
 
             progress.setValue(i)
