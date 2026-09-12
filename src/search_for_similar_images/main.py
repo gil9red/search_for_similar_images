@@ -129,8 +129,6 @@ class MainWindow(QMainWindow):
             self.start_indexing,
         )
 
-        self.action_fill_images_db = self.tool_bar_general.addAction("Fill with images")
-        self.action_fill_images_db.setIcon(QIcon(DIR_IMAGES + "/refresh.svg"))
 
         self.action_delete_all_indexes = self.tool_bar_general.addAction(
             self.style().standardIcon(QStyle.StandardPixmap.SP_DialogCancelButton),
@@ -142,8 +140,6 @@ class MainWindow(QMainWindow):
             "Fill with images",
             self.fill_images_db,
         )
-
-        self.action_fill_images_db.triggered.connect(self.fill_images_db)
 
         self.action_search_for_similar = self.tool_bar_general.addAction(
             QIcon(DIR_IMAGES + "/search.svg"),
@@ -157,8 +153,7 @@ class MainWindow(QMainWindow):
         )
 
         # TODO:
-        # self.action_scroll_to_origin = self.tool_bar_general.addAction('Scroll to origin')
-        # self.action_scroll_to_origin.triggered.connect(self.scroll_to_origin)
+        # self.action_scroll_to_origin = self.tool_bar_general.addAction('Scroll to origin', self.scroll_to_origin)
         # tool_bar_general
 
         # tool_bar_indexed_image_control
