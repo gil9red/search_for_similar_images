@@ -593,6 +593,8 @@ class MainWindow(QMainWindow):
 
         self._do_indexing(file_names)
 
+        self.fill_images_db()
+
     def start_search_for_similar(self) -> None:
         file_name: str | None = self.list_indexed_images_widget.currentFileName()
         if not file_name:
