@@ -469,7 +469,8 @@ class MainWindow(QMainWindow):
         reply = QMessageBox.question(
             self,
             "Delete Indexes",
-            "Are you sure you want to delete all indexes?\nThis action cannot be undone.",
+            "Are you sure you want to delete all indexes?"
+            "<br/><b>This action cannot be undone.</b>",
             QMessageBox.StandardButton.Yes,
             QMessageBox.StandardButton.No,
         )
