@@ -311,6 +311,7 @@ class MainWindow(QMainWindow):
             file_name_index=0,
         )
         self.list_images.clicked.connect(self._update_states)
+        # TODO: Ошибка с None: self.list_images.selectionModel().selectionChanged.connect(self._update_states)
         # TODO: Какая-нибудь настройка для двойного клика
         #       QComboBox
         #       Запоминать в настройках
@@ -336,6 +337,7 @@ class MainWindow(QMainWindow):
             file_name_index=0,
         )
         self.list_similars.clicked.connect(self._update_states)
+        # TODO: Ошибка с None: self.list_similars.selectionModel().selectionChanged.connect(self._update_states)
         self.list_similars.doubleClicked.connect(self.run_similar_image)
         self.list_similars.setModel(self.model_similar_images)
         # similar_images
