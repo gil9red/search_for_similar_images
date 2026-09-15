@@ -29,7 +29,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
 )
 from PyQt6.QtGui import QIcon, QImage
-from PyQt6.QtCore import Qt, QSettings, QSize
+from PyQt6.QtCore import Qt, QSettings, QSize, QFile
 
 from search_for_similar_images.third_party.shorten import shorten
 from search_for_similar_images.third_party.human_byte_size import sizeof_fmt
@@ -129,7 +129,6 @@ class MainWindow(QMainWindow):
             self.start_indexing,
         )
 
-        # TODO: Удаление файлов в корзину SP_TrashIcon
         # TODO: API для работы с файлами: копирование, перемещение, удаление в корзину, удаление, показ инфы
         # TODO: Доступно для картинок: основного списка, списка похожих, из кросс-поиска
 
@@ -193,6 +192,11 @@ class MainWindow(QMainWindow):
                 self.view_details_indexed_image,
             )
         )
+        self.action_move_to_trash_image = self.tool_bar_indexed_image_control.addAction(
+            self.style().standardIcon(QStyle.StandardPixmap.SP_TrashIcon),
+            "Move to trash",
+            self.move_to_trash_image,
+        )
         # tool_bar_indexed_image_control
 
         # tool_bar_similar_image_control
@@ -227,6 +231,13 @@ class MainWindow(QMainWindow):
                 QIcon(DIR_IMAGES + "/view.svg"),
                 "View details",
                 self.view_details_similar_image,
+            )
+        )
+        self.action_move_to_trash_similar_image = (
+            self.tool_bar_similar_image_control.addAction(
+                self.style().standardIcon(QStyle.StandardPixmap.SP_TrashIcon),
+                "Move to trash",
+                self.move_to_trash_similar_image,
             )
         )
         # tool_bar_similar_image_control
@@ -392,6 +403,7 @@ class MainWindow(QMainWindow):
         )
         self.action_run_indexed_image.setEnabled(has_index_list_images_widget)
         self.action_view_details_indexed_image.setEnabled(has_index_list_images_widget)
+        self.action_move_to_trash_image.setEnabled(has_index_list_images_widget)
         if has_index_list_images_widget:
             self.status_bar_indexed_image.setText(file_name_indexed)
 
@@ -407,6 +419,7 @@ class MainWindow(QMainWindow):
         self.action_view_details_similar_image.setEnabled(
             has_index_list_images_widget_similar
         )
+        self.action_move_to_trash_similar_image.setEnabled(has_index_list_images_widget)
         if has_index_list_images_widget_similar:
             self.status_bar_similar_image.setText(file_name_similar)
 
@@ -787,6 +800,51 @@ class MainWindow(QMainWindow):
 
         data: dict[str, ImageHash | None] = self.image_by_hashes[file_name]
         ImageHashDetailsDialog(file_name, data, parent=self).show()
+
+    def _move_to_trash(self, file_name: str) -> None:
+        if not file_name:
+            return
+
+        reply = QMessageBox.question(
+            self,
+            "Move to Trash",
+            f'Are you sure you want to move "{file_name}" to the trash?',
+            QMessageBox.StandardButton.Yes,
+            QMessageBox.StandardButton.No,
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+
+        file_obj: QFile = QFile(file_name)
+        if file_obj.moveToTrash():
+            QMessageBox.information(
+                self,
+                "Information",
+                f'File "{file_name}" was successfully moved to trash.',
+            )
+        else:
+            QMessageBox.warning(
+                self,
+                "Information",
+                f'Failed to move file "{file_name}" to trash.',
+            )
+
+        self.list_images.removeFromList(file_name)
+        self.list_similars.removeFromList(file_name)
+
+    def move_to_trash_image(self) -> None:
+        file_name: str | None = self.list_images.currentFileName()
+        if not file_name:
+            return
+
+        self._move_to_trash(file_name)
+
+    def move_to_trash_similar_image(self) -> None:
+        file_name: str | None = self.list_similars.currentFileName()
+        if not file_name:
+            return
+
+        self._move_to_trash(file_name)
 
     def read_settings(self) -> None:
         ini = QSettings(SETTINGS_FILE_NAME, QSettings.Format.IniFormat)
