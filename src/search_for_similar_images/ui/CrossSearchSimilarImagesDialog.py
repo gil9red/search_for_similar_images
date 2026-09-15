@@ -15,12 +15,15 @@ from PyQt6.QtWidgets import (
     QTreeWidgetItem,
     QProgressBar,
     QHeaderView,
+    QToolBar,
 )
+from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt, pyqtSignal, QThread
 
 from imagehash import ImageHash
 
-import imagehash
+from search_for_similar_images.config import DIR_IMAGES
+from search_for_similar_images.utils import explore
 
 
 class CrossSearchSimilarImagesThread(QThread):
@@ -88,6 +91,7 @@ class CrossSearchSimilarImagesDialog(QDialog):
         self.tree_widget.header().resizeSection(1, 75)
         self.tree_widget.setAlternatingRowColors(True)
         self.tree_widget.setExpandsOnDoubleClick(False)
+        self.tree_widget.itemClicked.connect(self._update_states)
         self.tree_widget.itemDoubleClicked.connect(
             lambda item, _: self.itemDoubleClicked.emit(
                 item.data(0, Qt.ItemDataRole.UserRole)
@@ -105,10 +109,26 @@ class CrossSearchSimilarImagesDialog(QDialog):
         self.thread.finished.connect(lambda: self.progress_bar.hide())
         self.thread.about_found_similars.connect(self._on_about_found_similars)
 
+        self.tool_bar = QToolBar("General")
+        self.tool_bar.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.action_select_image = self.tool_bar.addAction(
+            QIcon(DIR_IMAGES + "/image.svg"),
+            "Select image in explorer",
+            self.select_image_file,
+        )
+
         layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(self.tool_bar)
         layout.addWidget(self.progress_bar)
         layout.addWidget(self.tree_widget)
         self.setLayout(layout)
+
+        self._update_states()
+
+    def _update_states(self) -> None:
+        item: QTreeWidgetItem | None = self.tree_widget.currentItem()
+        self.action_select_image.setEnabled(item is not None)
 
     def _on_about_found_similars(
         self,
@@ -124,6 +144,17 @@ class CrossSearchSimilarImagesDialog(QDialog):
             child = QTreeWidgetItem([file_name, str(score)])
             child.setData(0, Qt.ItemDataRole.UserRole, file_name)
             item.addChild(child)
+
+    def select_image_file(self) -> None:
+        item: QTreeWidgetItem | None = self.tree_widget.currentItem()
+        if not item:
+            return
+
+        file_name: str = item.data(0, Qt.ItemDataRole.UserRole)
+        if not file_name:
+            return
+
+        explore(file_name)
 
     def start(
         self,
