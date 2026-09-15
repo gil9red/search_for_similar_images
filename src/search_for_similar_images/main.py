@@ -15,8 +15,6 @@ from timeit import default_timer
 import imagehash
 from imagehash import ImageHash
 
-from PIL import Image
-
 from PyQt6.QtWidgets import (
     QApplication,
     QMainWindow,
@@ -176,7 +174,6 @@ class MainWindow(QMainWindow):
                 self.select_indexed_image,
             )
         )
-
         self.action_open_indexed_image_directory = (
             self.tool_bar_indexed_image_control.addAction(
                 QIcon(DIR_IMAGES + "/folder.svg"),
@@ -292,22 +289,22 @@ class MainWindow(QMainWindow):
         self.search_for_similar_settings.about_mark_matching.connect(
             lambda flag: (
                 self.model_files.set_mark_matching(flag),
-                self.list_indexed_images_widget.viewport().repaint(),
+                self.list_images.viewport().repaint(),
             )
         )
 
-        self.list_indexed_images_widget = ListImagesWidget(
+        self.list_images = ListImagesWidget(
             icon_width=ICON_WIDTH,
             icon_height=ICON_HEIGHT,
             image_cache=IMAGE_CACHE,
             file_name_index=0,
         )
-        self.list_indexed_images_widget.clicked.connect(self._update_states)
+        self.list_images.clicked.connect(self._update_states)
         # TODO: Какая-нибудь настройка для двойного клика
         #       QComboBox
         #       Запоминать в настройках
-        self.list_indexed_images_widget.doubleClicked.connect(self.run_indexed_image)
-        self.list_indexed_images_widget.setModel(self.model_files)
+        self.list_images.doubleClicked.connect(self.run_indexed_image)
+        self.list_images.setModel(self.model_files)
         # files
 
         # similar_images
@@ -321,15 +318,15 @@ class MainWindow(QMainWindow):
             )
         )
 
-        self.list_images_widget_similar = ListImagesWidget(
+        self.list_similars = ListImagesWidget(
             icon_width=ICON_WIDTH,
             icon_height=ICON_HEIGHT,
             image_cache=IMAGE_CACHE,
             file_name_index=0,
         )
-        self.list_images_widget_similar.clicked.connect(self._update_states)
-        self.list_images_widget_similar.doubleClicked.connect(self.run_similar_image)
-        self.list_images_widget_similar.setModel(self.model_similar_images)
+        self.list_similars.clicked.connect(self._update_states)
+        self.list_similars.doubleClicked.connect(self.run_similar_image)
+        self.list_similars.setModel(self.model_similar_images)
         # similar_images
 
         # Все действия к прикрепляемым окнам поместим в меню
@@ -359,7 +356,7 @@ class MainWindow(QMainWindow):
         _top_header_layout.addWidget(self.label_indexed_images_progress)
         _top_widget.layout().addLayout(_top_header_layout)
         _top_widget.layout().addWidget(self.progress_bar_list_images_widget)
-        _top_widget.layout().addWidget(self.list_indexed_images_widget)
+        _top_widget.layout().addWidget(self.list_images)
 
         _bottom_widget = QWidget()
         _bottom_widget.setLayout(QVBoxLayout())
@@ -370,7 +367,7 @@ class MainWindow(QMainWindow):
         _bottom_header_layout.addWidget(self.label_similar_images_progress)
         _bottom_widget.layout().addLayout(_bottom_header_layout)
         _bottom_widget.layout().addWidget(self.progress_bar_list_images_widget_similar)
-        _bottom_widget.layout().addWidget(self.list_images_widget_similar)
+        _bottom_widget.layout().addWidget(self.list_similars)
 
         part_splitter_height: int = max(
             _top_widget.minimumSizeHint().height(),
@@ -385,9 +382,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(splitter)
 
     def _update_states(self) -> None:
-        file_name_indexed: str | None = (
-            self.list_indexed_images_widget.currentFileName()
-        )
+        file_name_indexed: str | None = self.list_images.currentFileName()
         has_index_list_images_widget = bool(file_name_indexed)
 
         self.action_search_for_similar.setEnabled(has_index_list_images_widget)
@@ -400,7 +395,7 @@ class MainWindow(QMainWindow):
         if has_index_list_images_widget:
             self.status_bar_indexed_image.setText(file_name_indexed)
 
-        file_name_similar = self.list_images_widget_similar.currentFileName()
+        file_name_similar: str | None = self.list_similars.currentFileName()
         has_index_list_images_widget_similar = bool(file_name_similar)
         self.action_select_similar_image.setEnabled(
             has_index_list_images_widget_similar
@@ -634,7 +629,7 @@ class MainWindow(QMainWindow):
         self.fill_images_db()
 
     def start_search_for_similar(self) -> None:
-        file_name: str | None = self.list_indexed_images_widget.currentFileName()
+        file_name: str | None = self.list_images.currentFileName()
         if not file_name:
             return
 
@@ -736,28 +731,28 @@ class MainWindow(QMainWindow):
     #     self.list_images_widget_similar.scrollTo(index)
 
     def select_indexed_image(self) -> None:
-        file_name: str | None = self.list_indexed_images_widget.currentFileName()
+        file_name: str | None = self.list_images.currentFileName()
         if not file_name:
             return
 
         explore(file_name)
 
     def open_indexed_image_directory(self) -> None:
-        file_name: str | None = self.list_indexed_images_widget.currentFileName()
+        file_name: str | None = self.list_images.currentFileName()
         if not file_name:
             return
 
         explore(Path(file_name).parent, select=False)
 
     def run_indexed_image(self) -> None:
-        file_name: str | None = self.list_indexed_images_widget.currentFileName()
+        file_name: str | None = self.list_images.currentFileName()
         if not file_name:
             return
 
         explore(file_name, select=False)
 
     def view_details_indexed_image(self) -> None:
-        file_name: str | None = self.list_indexed_images_widget.currentFileName()
+        file_name: str | None = self.list_images.currentFileName()
         if not file_name:
             return
 
@@ -765,28 +760,28 @@ class MainWindow(QMainWindow):
         ImageHashDetailsDialog(file_name, data, parent=self).show()
 
     def select_similar_image(self) -> None:
-        file_name: str | None = self.list_images_widget_similar.currentFileName()
+        file_name: str | None = self.list_similars.currentFileName()
         if not file_name:
             return
 
         explore(file_name)
 
     def open_similar_image_directory(self) -> None:
-        file_name: str | None = self.list_images_widget_similar.currentFileName()
+        file_name: str | None = self.list_similars.currentFileName()
         if not file_name:
             return
 
         explore(Path(file_name).parent, select=False)
 
     def run_similar_image(self) -> None:
-        file_name: str | None = self.list_images_widget_similar.currentFileName()
+        file_name: str | None = self.list_similars.currentFileName()
         if not file_name:
             return
 
         explore(file_name, select=False)
 
     def view_details_similar_image(self) -> None:
-        file_name: str | None = self.list_images_widget_similar.currentFileName()
+        file_name: str | None = self.list_similars.currentFileName()
         if not file_name:
             return
 
