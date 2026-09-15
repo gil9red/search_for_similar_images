@@ -18,7 +18,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, pyqtSignal, QThread
 
-from PIL import Image
+from imagehash import ImageHash
 
 import imagehash
 
@@ -28,7 +28,7 @@ class CrossSearchSimilarImagesThread(QThread):
 
     def __init__(
         self,
-        image_by_hashes: dict = None,
+        image_by_hashes: dict[str, dict[str, ImageHash | None]] | None = None,
         hash_algo: str | None = None,
         max_score: int | None = None,
     ) -> None:
@@ -39,32 +39,30 @@ class CrossSearchSimilarImagesThread(QThread):
         self.max_score = max_score
 
     def run(self) -> None:
-        img_by_hash = dict()
-        for file_name, hashes in self.image_by_hashes.items():
-            hash_value = hashes[self.hash_algo]
+        img_by_hash: dict[str, ImageHash | None] = {
+            file_name: hashes[self.hash_algo]
+            for file_name, hashes in self.image_by_hashes.items()
+        }
 
-            # TODO: Monkey patch. https://github.com/JohannesBuchner/imagehash/issues/112
-            if self.hash_algo == "colorhash":
-                hash_value = imagehash.colorhash(Image.open(file_name))
-
-            img_by_hash[file_name] = hash_value
-
-        file_name_by_similars = defaultdict(list)
-        for img_1, img_2 in itertools.product(img_by_hash.items(), repeat=2):
-            if img_1 == img_2:
+        file_name_by_similars: dict[str, list[tuple[str, int]]] = defaultdict(list)
+        for img_hash_1, img_hash_2 in itertools.product(img_by_hash.items(), repeat=2):
+            if img_hash_1 == img_hash_2:
                 continue
 
-            file_name_1, hash_img_1 = img_1
-            file_name_2, hash_img_2 = img_2
+            file_name_1, hash_img_1 = img_hash_1
+            file_name_2, hash_img_2 = img_hash_2
 
-            score = hash_img_1 - hash_img_2
+            score: int = int(hash_img_1 - hash_img_2)
             if score > self.max_score:
                 continue
 
             file_name_by_similars[file_name_1].append((file_name_2, score))
 
         # Обратная сортировка по количеству элементов, а названия элементов сортируются по возрастанию
-        items = sorted(file_name_by_similars.items(), key=lambda x: (-len(x[1]), x[0]))
+        items: list[tuple[str, list[tuple[str, int]]]] = sorted(
+            file_name_by_similars.items(),
+            key=lambda x: (-len(x[1]), x[0]),
+        )
         for file_name, similars in items:
             if not similars:
                 continue
@@ -112,18 +110,27 @@ class CrossSearchSimilarImagesDialog(QDialog):
         layout.addWidget(self.tree_widget)
         self.setLayout(layout)
 
-    def _on_about_found_similars(self, file_name: str, similars: list[str]) -> None:
+    def _on_about_found_similars(
+        self,
+        file_name: str,
+        similars: list[tuple[str, int]],
+    ) -> None:
         item = QTreeWidgetItem([f"{file_name} ({len(similars)})"])
         item.setData(0, Qt.ItemDataRole.UserRole, file_name)
 
         self.tree_widget.addTopLevelItem(item)
 
-        for x, score in similars:
-            child = QTreeWidgetItem([x, str(score)])
-            child.setData(0, Qt.ItemDataRole.UserRole, x)
+        for file_name, score in similars:
+            child = QTreeWidgetItem([file_name, str(score)])
+            child.setData(0, Qt.ItemDataRole.UserRole, file_name)
             item.addChild(child)
 
-    def start(self, image_by_hashes: dict, hash_algo: str, max_score: int) -> None:
+    def start(
+        self,
+        image_by_hashes: dict[str, dict[str, ImageHash | None]],
+        hash_algo: str,
+        max_score: int,
+    ) -> None:
         self.setWindowTitle(
             f"{self.window_title}. hash_algo={hash_algo} max_score={max_score}"
         )
