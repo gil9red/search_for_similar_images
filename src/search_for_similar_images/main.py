@@ -79,7 +79,7 @@ sys.excepthook = log_uncaught_exceptions
 
 
 DEFAULT_PATH_MAX_LENGTH: int = 50
-IMAGE_CACHE: dict[str, QImage | None] = dict()
+IMAGE_CACHE: dict[str, QImage] = dict()
 
 
 def parse_hash(algo_name: str, hex_value: str) -> ImageHash | None:
@@ -696,7 +696,7 @@ class MainWindow(QMainWindow):
 
             other_hash_value: ImageHash | None = hashes[hash_algo]
 
-            score = hash_value - other_hash_value
+            score: int = int(hash_value - other_hash_value)
             print(
                 f"Score: {score:2}. Similar images: {file_name!r} and {other_file_name!r}. "
                 f"{hash_value} vs {other_hash_value}"
