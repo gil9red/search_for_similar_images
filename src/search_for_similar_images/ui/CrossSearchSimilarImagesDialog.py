@@ -145,6 +145,8 @@ class CrossSearchSimilarImagesDialog(QDialog):
             child.setData(0, Qt.ItemDataRole.UserRole, file_name)
             item.addChild(child)
 
+        item.setExpanded(True)
+
     def select_image_file(self) -> None:
         item: QTreeWidgetItem | None = self.tree_widget.currentItem()
         if not item:
