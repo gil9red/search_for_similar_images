@@ -419,7 +419,7 @@ class MainWindow(QMainWindow):
         self.action_view_details_similar_image.setEnabled(
             has_index_list_images_widget_similar
         )
-        self.action_move_to_trash_similar_image.setEnabled(has_index_list_images_widget)
+        self.action_move_to_trash_similar_image.setEnabled(has_index_list_images_widget_similar)
         if has_index_list_images_widget_similar:
             self.status_bar_similar_image.setText(file_name_similar)
 
