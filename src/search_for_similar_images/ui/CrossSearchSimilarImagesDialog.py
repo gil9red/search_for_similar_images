@@ -31,9 +31,9 @@ class CrossSearchSimilarImagesThread(QThread):
 
     def __init__(
         self,
-        image_by_hashes: dict[str, dict[str, ImageHash | None]] | None = None,
-        hash_algo: str | None = None,
-        max_score: int | None = None,
+        image_by_hashes: dict[str, dict[str, ImageHash]] | None = None,
+        hash_algo: str = "",
+        max_score: int = -1,
     ) -> None:
         super().__init__()
 
@@ -42,7 +42,7 @@ class CrossSearchSimilarImagesThread(QThread):
         self.max_score = max_score
 
     def run(self) -> None:
-        img_by_hash: dict[str, ImageHash | None] = {
+        img_by_hash: dict[str, ImageHash] = {
             file_name: hashes[self.hash_algo]
             for file_name, hashes in self.image_by_hashes.items()
         }
@@ -158,7 +158,7 @@ class CrossSearchSimilarImagesDialog(QDialog):
 
     def start(
         self,
-        image_by_hashes: dict[str, dict[str, ImageHash | None]],
+        image_by_hashes: dict[str, dict[str, ImageHash]],
         hash_algo: str,
         max_score: int,
     ) -> None:

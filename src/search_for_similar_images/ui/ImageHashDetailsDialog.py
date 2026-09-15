@@ -19,7 +19,7 @@ class ImageHashDetailsDialog(QDialog):
     def __init__(
         self,
         file_name: str,
-        data: dict[str, ImageHash | None],
+        data: dict[str, ImageHash],
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)

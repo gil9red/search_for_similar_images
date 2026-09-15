@@ -100,7 +100,7 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle(str(Path(__file__).parent.name))
 
-        self.image_by_hashes: dict[str, dict[str, ImageHash | None]] = dict()
+        self.image_by_hashes: dict[str, dict[str, ImageHash]] = dict()
 
         self._fill_ui()
 
@@ -464,10 +464,16 @@ class MainWindow(QMainWindow):
 
         for row in db.get_all():
             file_name = row["file_name"]
-            self.image_by_hashes[file_name] = {
-                hash_name: parse_hash(hash_name, row[hash_name])
-                for hash_name in IMAGE_HASH_ALGO
-            }
+
+            algo_by_hash: dict[str, ImageHash] = dict()
+            for hash_name in IMAGE_HASH_ALGO:
+                hash_value: ImageHash | None = parse_hash(hash_name, row[hash_name])
+                if not hash_value:
+                    continue
+
+                algo_by_hash[hash_name] = hash_value
+
+            self.image_by_hashes[file_name] = algo_by_hash
 
         self.model_files.set_total_file_list(list(self.image_by_hashes.keys()))
 
@@ -649,7 +655,7 @@ class MainWindow(QMainWindow):
         hash_algo: str = self.search_for_similar_settings.cb_algo.currentText()
         max_score: int = self.search_for_similar_settings.sb_max_score.value()
 
-        hash_value: ImageHash | None = self.image_by_hashes[file_name][hash_algo]
+        hash_value: ImageHash = self.image_by_hashes[file_name][hash_algo]
 
         print(
             f"start_search_for_similar: hash_algo={hash_algo}, max_score={max_score}, "
@@ -694,7 +700,7 @@ class MainWindow(QMainWindow):
             if other_file_name == file_name:
                 continue
 
-            other_hash_value: ImageHash | None = hashes[hash_algo]
+            other_hash_value: ImageHash = hashes[hash_algo]
 
             score: int = int(hash_value - other_hash_value)
             print(
@@ -769,7 +775,7 @@ class MainWindow(QMainWindow):
         if not file_name:
             return
 
-        data: dict[str, ImageHash | None] = self.image_by_hashes[file_name]
+        data: dict[str, ImageHash] = self.image_by_hashes[file_name]
         ImageHashDetailsDialog(file_name, data, parent=self).show()
 
     def select_similar_image(self) -> None:
@@ -798,7 +804,7 @@ class MainWindow(QMainWindow):
         if not file_name:
             return
 
-        data: dict[str, ImageHash | None] = self.image_by_hashes[file_name]
+        data: dict[str, ImageHash] = self.image_by_hashes[file_name]
         ImageHashDetailsDialog(file_name, data, parent=self).show()
 
     def _move_to_trash(self, file_name: str) -> None:
